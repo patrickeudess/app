@@ -1,0 +1,375 @@
+/* Styles spécifiques pour la page d'accueil optimisée */
+
+/* Variables pour les couleurs de statut */
+:root {
+    --status-green: #28a745;
+    --status-orange: #ffc107;
+    --status-red: #dc3545;
+    --status-green-bg: rgba(40, 167, 69, 0.1);
+    --status-orange-bg: rgba(255, 193, 7, 0.1);
+    --status-red-bg: rgba(220, 53, 69, 0.1);
+}
+
+/* Optimisations pour petits écrans (4.7"-6.1") */
+body {
+    font-size: 18px; /* Taille minimale 18pt */
+    line-height: 1.4;
+}
+
+/* Titres avec tailles optimisées */
+.page-title h1 {
+    font-size: 28px; /* Titre principal 28pt */
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.page-title {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+}
+
+.page-title i {
+    font-size: 24px;
+    color: var(--primary-color);
+}
+
+/* Bouton d'écoute pour le titre */
+.listen-btn {
+    background: var(--gradient-primary);
+    color: white;
+    border: none;
+    padding: 0.75rem 1rem;
+    border-radius: 25px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(46, 139, 87, 0.3);
+}
+
+.listen-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(46, 139, 87, 0.4);
+}
+
+.listen-btn i {
+    font-size: 14px;
+}
+
+/* Grille 3x3 optimisée pour petits écrans */
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.75rem;
+    margin-bottom: 2rem;
+}
+
+/* Cartes de fonctionnalités optimisées */
+.feature-card {
+    background: var(--card-bg);
+    padding: 1rem;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    border: 2px solid transparent;
+    min-height: 140px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.feature-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+    border-color: var(--primary-color);
+}
+
+/* Icônes des fonctionnalités */
+.feature-icon {
+    width: 50px;
+    height: 50px;
+    background: var(--gradient-primary);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 0.75rem;
+    color: white;
+    font-size: 20px;
+}
+
+/* Titres des fonctionnalités */
+.feature-card h3 {
+    font-size: 20px; /* 20pt pour les titres */
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+    line-height: 1.2;
+}
+
+/* Descriptions des fonctionnalités */
+.feature-card p {
+    font-size: 16px; /* 18pt pour le texte */
+    color: var(--text-secondary);
+    line-height: 1.3;
+    margin-bottom: 0.5rem;
+    flex-grow: 1;
+}
+
+/* Badge "Nouveau" */
+.feature-badge {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+    background: var(--accent-color);
+    color: var(--secondary-color);
+}
+
+/* Boutons d'écoute pour chaque carte */
+.listen-btn-small {
+    background: rgba(46, 139, 87, 0.1);
+    color: var(--primary-color);
+    border: none;
+    padding: 0.5rem;
+    border-radius: 50%;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    bottom: 0.5rem;
+    right: 0.5rem;
+}
+
+.listen-btn-small:hover {
+    background: var(--primary-color);
+    color: white;
+    transform: scale(1.1);
+}
+
+/* Couleurs spécifiques pour chaque type de carte */
+.prediction-card .feature-icon {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+}
+
+.data-card .feature-icon {
+    background: linear-gradient(135deg, #007bff 0%, #6610f2 100%);
+}
+
+.history-card .feature-icon {
+    background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+}
+
+.ai-card .feature-icon {
+    background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%);
+}
+
+.analysis-card .feature-icon {
+    background: linear-gradient(135deg, #17a2b8 0%, #6f42c1 100%);
+}
+
+.revenue-card .feature-icon {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+}
+
+.production-card .feature-icon {
+    background: linear-gradient(135deg, #2E8B57 0%, #1a472a 100%);
+}
+
+.tips-card .feature-icon {
+    background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%);
+}
+
+.profile-card .feature-icon {
+    background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+}
+
+/* Section État Actuel */
+.quick-status {
+    margin-top: 2rem;
+}
+
+.quick-status h2 {
+    font-size: 24px; /* 24pt pour les sous-titres */
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+.status-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+}
+
+.status-item {
+    background: var(--card-bg);
+    padding: 1rem;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    transition: all 0.3s ease;
+    border-left: 4px solid;
+}
+
+.status-item.green {
+    border-left-color: var(--status-green);
+    background: var(--status-green-bg);
+}
+
+.status-item.orange {
+    border-left-color: var(--status-orange);
+    background: var(--status-orange-bg);
+}
+
+.status-item.red {
+    border-left-color: var(--status-red);
+    background: var(--status-red-bg);
+}
+
+.status-item i {
+    font-size: 20px;
+    width: 24px;
+    text-align: center;
+}
+
+.status-item.green i {
+    color: var(--status-green);
+}
+
+.status-item.orange i {
+    color: var(--status-orange);
+}
+
+.status-item.red i {
+    color: var(--status-red);
+}
+
+.status-item span {
+    font-size: 16px; /* 18pt */
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+/* Responsive pour très petits écrans */
+@media (max-width: 480px) {
+    .features-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.5rem;
+    }
+    
+    .feature-card {
+        padding: 0.75rem;
+        min-height: 120px;
+    }
+    
+    .feature-icon {
+        width: 40px;
+        height: 40px;
+        font-size: 16px;
+    }
+    
+    .feature-card h3 {
+        font-size: 18px;
+    }
+    
+    .feature-card p {
+        font-size: 14px;
+    }
+    
+    .page-title h1 {
+        font-size: 24px;
+    }
+    
+    .quick-status h2 {
+        font-size: 20px;
+    }
+    
+    .status-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Animations optimisées */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.feature-card {
+    animation: fadeInUp 0.5s ease-out;
+}
+
+.feature-card:nth-child(1) { animation-delay: 0.1s; }
+.feature-card:nth-child(2) { animation-delay: 0.2s; }
+.feature-card:nth-child(3) { animation-delay: 0.3s; }
+.feature-card:nth-child(4) { animation-delay: 0.4s; }
+.feature-card:nth-child(5) { animation-delay: 0.5s; }
+.feature-card:nth-child(6) { animation-delay: 0.6s; }
+.feature-card:nth-child(7) { animation-delay: 0.7s; }
+.feature-card:nth-child(8) { animation-delay: 0.8s; }
+.feature-card:nth-child(9) { animation-delay: 0.9s; }
+
+/* Optimisations pour l'accessibilité */
+.feature-card:focus {
+    outline: 3px solid var(--primary-color);
+    outline-offset: 2px;
+}
+
+.listen-btn:focus,
+.listen-btn-small:focus {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 2px;
+}
+
+/* Indicateurs de statut animés */
+.status-item {
+    animation: fadeInUp 0.6s ease-out;
+}
+
+.status-item:nth-child(1) { animation-delay: 1.0s; }
+.status-item:nth-child(2) { animation-delay: 1.1s; }
+.status-item:nth-child(3) { animation-delay: 1.2s; }
+
+/* Effets de hover pour les statuts */
+.status-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Optimisations pour la densité moyenne */
+@media (min-resolution: 2dppx) {
+    .feature-card {
+        border-width: 1px;
+    }
+    
+    .status-item {
+        border-left-width: 3px;
+    }
+}

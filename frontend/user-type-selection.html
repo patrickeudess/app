@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Choisissez votre profil - Mon Cacao</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .user-type-selection {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #2E8B57 0%, #3CB371 50%, #28a745 100%);
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .user-type-selection::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(255,255,255,0.1) 1px, transparent 1px),
+                radial-gradient(circle at 80% 20%, rgba(255,255,255,0.1) 1px, transparent 1px),
+                radial-gradient(circle at 40% 80%, rgba(255,255,255,0.1) 1px, transparent 1px);
+            background-size: 50px 50px, 30px 30px, 40px 40px;
+            animation: sparkle 4s linear infinite;
+            pointer-events: none;
+        }
+
+        @keyframes sparkle {
+            0% { transform: translateY(0px); }
+            100% { transform: translateY(-50px); }
+        }
+
+        .selection-container {
+            max-width: 900px;
+            width: 100%;
+            z-index: 2;
+            position: relative;
+        }
+
+        .selection-header {
+            text-align: center;
+            margin-bottom: 3rem;
+            color: white;
+        }
+
+        .selection-header .logo-large {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .logo-large .logo-container {
+            width: 80px;
+            height: 80px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .logo-large .logo-plant {
+            font-size: 2.5rem;
+            color: #FFD700;
+        }
+
+        .logo-large .logo-coins {
+            font-size: 2rem;
+            color: #FFD700;
+            margin-left: -0.5rem;
+        }
+
+        .selection-header h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin: 0 0 1rem 0;
+            text-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .selection-header p {
+            font-size: 1.2rem;
+            opacity: 0.95;
+            margin: 0;
+        }
+
+        .user-types-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .user-type-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 2.5rem;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 3px solid transparent;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .user-type-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, #2E8B57, #3CB371, #28a745);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .user-type-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 16px 48px rgba(0, 0, 0, 0.3);
+            border-color: #2E8B57;
+        }
+
+        .user-type-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .user-type-card.selected {
+            border-color: #2E8B57;
+            background: linear-gradient(135deg, rgba(46, 139, 87, 0.1) 0%, rgba(255, 255, 255, 0.95) 100%);
+        }
+
+        .user-type-card.selected::before {
+            transform: scaleX(1);
+        }
+
+        .type-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            font-size: 2.5rem;
+            color: white;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        .type-icon.producer {
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+        }
+
+        .type-icon.professional {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+        }
+
+        .user-type-card h2 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #2c3e50;
+            margin: 0 0 1rem 0;
+            text-align: center;
+        }
+
+        .user-type-card p {
+            font-size: 1rem;
+            color: #6c757d;
+            line-height: 1.6;
+            margin: 0 0 1.5rem 0;
+            text-align: center;
+        }
+
+        .type-features {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 1.5rem 0;
+        }
+
+        .type-features li {
+            padding: 0.75rem 0;
+            color: #2c3e50;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 0.95rem;
+        }
+
+        .type-features li i {
+            color: #2E8B57;
+            font-size: 1.1rem;
+            width: 20px;
+        }
+
+        .continue-btn {
+            width: 100%;
+            padding: 1rem 2rem;
+            background: linear-gradient(135deg, #2E8B57, #3CB371);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 16px rgba(46, 139, 87, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+        }
+
+        .continue-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(46, 139, 87, 0.4);
+        }
+
+        .continue-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .back-link {
+            text-align: center;
+            margin-top: 2rem;
+        }
+
+        .back-link a {
+            color: white;
+            text-decoration: none;
+            font-size: 1rem;
+            opacity: 0.9;
+            transition: opacity 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .back-link a:hover {
+            opacity: 1;
+        }
+
+        @media (max-width: 768px) {
+            .user-types-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+
+            .selection-header h1 {
+                font-size: 2rem;
+            }
+
+            .user-type-card {
+                padding: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="user-type-selection">
+        <div class="selection-container">
+            <div class="selection-header">
+                <div class="logo-large">
+                    <div class="logo-container">
+                        <i class="fas fa-seedling logo-plant"></i>
+                        <i class="fas fa-coins logo-coins"></i>
+                    </div>
+                </div>
+                <h1>Bienvenue sur Mon Cacao</h1>
+                <p>Choisissez votre profil pour accéder à votre interface personnalisée</p>
+            </div>
+
+            <div class="user-types-grid">
+                <!-- Carte Producteur -->
+                <div class="user-type-card" data-type="producteur" onclick="selectUserType('producteur')">
+                    <div class="type-icon producer">
+                        <i class="fas fa-user-tie"></i>
+                    </div>
+                    <h2>Producteur</h2>
+                    <p>Je suis un agriculteur/producteur de cacao</p>
+                    <ul class="type-features">
+                        <li><i class="fas fa-check-circle"></i> Estimation de ma récolte</li>
+                        <li><i class="fas fa-check-circle"></i> Suivi de ma production</li>
+                        <li><i class="fas fa-check-circle"></i> Analyse de mes revenus</li>
+                        <li><i class="fas fa-check-circle"></i> Conseils personnalisés</li>
+                        <li><i class="fas fa-check-circle"></i> Score écologique</li>
+                    </ul>
+                </div>
+
+                <!-- Carte Professionnel/Structure -->
+                <div class="user-type-card" data-type="professionnel" onclick="selectUserType('professionnel')">
+                    <div class="type-icon professional">
+                        <i class="fas fa-building"></i>
+                    </div>
+                    <h2>Professionnel / Structure</h2>
+                    <p>Je suis une coopérative, une entité ou un professionnel qui suit plusieurs producteurs</p>
+                    <ul class="type-features">
+                        <li><i class="fas fa-check-circle"></i> Gestion de plusieurs producteurs</li>
+                        <li><i class="fas fa-check-circle"></i> Tableaux de bord agrégés</li>
+                        <li><i class="fas fa-check-circle"></i> Analyses comparatives</li>
+                        <li><i class="fas fa-check-circle"></i> Rapports consolidés</li>
+                        <li><i class="fas fa-check-circle"></i> Suivi de performance</li>
+                    </ul>
+                </div>
+            </div>
+
+            <button class="continue-btn" id="continueBtn" onclick="continueToInterface()" disabled>
+                <i class="fas fa-arrow-right"></i>
+                <span>Continuer</span>
+            </button>
+
+            <div class="back-link">
+                <a href="index.html">
+                    <i class="fas fa-arrow-left"></i>
+                    <span>Retour à l'accueil</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let selectedUserType = null;
+
+        function selectUserType(type) {
+            // Retirer la sélection précédente
+            document.querySelectorAll('.user-type-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+
+            // Ajouter la sélection à la carte cliquée
+            const card = document.querySelector(`[data-type="${type}"]`);
+            card.classList.add('selected');
+            selectedUserType = type;
+
+            // Activer le bouton continuer
+            const continueBtn = document.getElementById('continueBtn');
+            continueBtn.disabled = false;
+
+            // Animation du bouton
+            continueBtn.style.transform = 'scale(1.05)';
+            setTimeout(() => {
+                continueBtn.style.transform = 'scale(1)';
+            }, 200);
+        }
+
+        function continueToInterface() {
+            if (!selectedUserType) {
+                alert('Veuillez sélectionner un type d\'utilisateur');
+                return;
+            }
+
+            // Sauvegarder le type d'utilisateur sélectionné pour l'authentification
+            localStorage.setItem('selected_user_type_for_auth', selectedUserType);
+
+            // Rediriger vers la page d'authentification
+            window.location.href = 'auth.html';
+        }
+
+        // Vérifier si un type a déjà été sélectionné
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedType = localStorage.getItem('user_type');
+            if (savedType) {
+                // Pré-sélectionner le type sauvegardé
+                selectUserType(savedType);
+            }
+        });
+    </script>
+</body>
+</html>
+

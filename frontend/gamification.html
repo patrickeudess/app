@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#FFD700">
+    <title>Gamification - Mon Cacao</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/modern-banner.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="js/auth.js"></script>
+    <script src="js/database-sync.js"></script>
+    <style>
+        .gamification-page {
+            padding: 2rem 0;
+        }
+
+        .page-header {
+            margin-bottom: 2rem;
+        }
+
+        .page-title {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .page-title h1 {
+            margin: 0;
+            font-size: 2rem;
+            color: #2c3e50;
+        }
+
+        .stats-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .stat-card .icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .stat-card.points .icon {
+            color: #FFD700;
+        }
+
+        .stat-card.level .icon {
+            color: #667eea;
+        }
+
+        .stat-card.badges .icon {
+            color: #2E8B57;
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #2c3e50;
+            margin: 0.5rem 0;
+        }
+
+        .badges-section, .leaderboard-section {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .badges-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .badge-item {
+            text-align: center;
+            padding: 1.5rem;
+            border: 2px solid #e9ecef;
+            border-radius: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .badge-item.earned {
+            border-color: #FFD700;
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(255, 165, 0, 0.1));
+        }
+
+        .badge-item .badge-icon {
+            font-size: 3rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .badge-item.earned .badge-icon {
+            color: #FFD700;
+        }
+
+        .badge-item:not(.earned) .badge-icon {
+            color: #ccc;
+            filter: grayscale(100%);
+        }
+
+        .leaderboard-table {
+            width: 100%;
+            margin-top: 1.5rem;
+        }
+
+        .leaderboard-row {
+            display: grid;
+            grid-template-columns: 50px 1fr 100px 100px;
+            gap: 1rem;
+            padding: 1rem;
+            border-bottom: 1px solid #e9ecef;
+            align-items: center;
+        }
+
+        .leaderboard-row:first-child {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(255, 165, 0, 0.1));
+            font-weight: 600;
+        }
+
+        .rank {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        .rank.first {
+            color: #FFD700;
+        }
+
+        @media (max-width: 768px) {
+            .stats-cards {
+                grid-template-columns: 1fr;
+            }
+
+            .badges-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="app-header">
+        <div class="header-content">
+            <div class="header-left">
+                <div class="header-logo">
+                    <div class="logo-container">
+                        <i class="fas fa-seedling logo-plant"></i>
+                        <i class="fas fa-coins logo-coins"></i>
+                    </div>
+                    <div class="logo-text">
+                        <h1>Mon Cacao</h1>
+                    </div>
+                </div>
+                <div class="user-status">
+                    <div class="status-line">
+                        <i class="fas fa-circle status-dot"></i>
+                        <span>En ligne</span>
+                    </div>
+                    <div class="user-info">
+                        <i class="fas fa-building user-icon"></i>
+                        <span id="userTypeLabel">Professionnel</span>
+                    </div>
+                </div>
+            </div>
+            <div class="header-right">
+                <button class="btn-back" onclick="window.location.href='dashboard-professionnel.html'">
+                    <i class="fas fa-arrow-left"></i>
+                    <span>Retour</span>
+                </button>
+                <button class="btn-disconnect" onclick="changeUserType()">
+                    <i class="fas fa-exchange-alt"></i>
+                    <span>Changer de profil</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="main-content gamification-page">
+        <div class="content-container">
+            <div class="page-header">
+                <div class="page-title">
+                    <i class="fas fa-trophy" style="color: #FFD700; font-size: 2rem;"></i>
+                    <h1>Gamification</h1>
+                </div>
+            </div>
+
+            <div class="stats-cards">
+                <div class="stat-card points">
+                    <div class="icon">
+                        <i class="fas fa-coins"></i>
+                    </div>
+                    <h3>Points</h3>
+                    <div class="stat-value" id="totalPoints">0</div>
+                </div>
+                <div class="stat-card level">
+                    <div class="icon">
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <h3>Niveau</h3>
+                    <div class="stat-value" id="userLevel">1</div>
+                </div>
+                <div class="stat-card badges">
+                    <div class="icon">
+                        <i class="fas fa-medal"></i>
+                    </div>
+                    <h3>Badges</h3>
+                    <div class="stat-value" id="badgeCount">0</div>
+                </div>
+            </div>
+
+            <div class="badges-section">
+                <h2 style="margin: 0 0 1rem 0;">
+                    <i class="fas fa-medal" style="color: #FFD700;"></i>
+                    Mes Badges
+                </h2>
+                <div class="badges-grid" id="badgesGrid">
+                    <!-- Les badges seront chargés ici -->
+                </div>
+            </div>
+
+            <div class="leaderboard-section">
+                <h2 style="margin: 0 0 1rem 0;">
+                    <i class="fas fa-trophy" style="color: #FFD700;"></i>
+                    Classement
+                </h2>
+                <div class="leaderboard-table" id="leaderboardTable">
+                    <!-- Le classement sera chargé ici -->
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        let currentUserId = null;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            checkAuthentication('professionnel');
+            updateUserTypeDisplay();
+            
+            currentUserId = parseInt(localStorage.getItem('current_user_id')) || null;
+            if (currentUserId) {
+                loadGamificationData();
+            }
+        });
+
+        function changeUserType() {
+            if (confirm('Voulez-vous changer de profil ? Vous serez déconnecté.')) {
+                localStorage.removeItem('user_type');
+                localStorage.removeItem('user_type_selected');
+                localStorage.removeItem('user_authenticated');
+                localStorage.removeItem('current_user_id');
+                localStorage.removeItem('current_user_name');
+                localStorage.removeItem('selected_user_type_for_auth');
+                window.location.href = 'user-type-selection.html';
+            }
+        }
+
+        async function loadGamificationData() {
+            await loadBadges();
+            await loadLeaderboard();
+            // Les points seront chargés avec les badges
+        }
+
+        async function loadBadges() {
+            try {
+                const result = await dbSync.getBadges(currentUserId);
+                const badges = result.badges || [];
+                
+                document.getElementById('badgeCount').textContent = badges.length;
+
+                // Liste de tous les badges possibles
+                const allBadges = [
+                    { type: 'productivity', name: 'Producteur Expert', icon: 'fa-seedling', description: 'Production élevée' },
+                    { type: 'submission', name: 'Régulier', icon: 'fa-calendar-check', description: '10 soumissions' },
+                    { type: 'eco', name: 'Éco-responsable', icon: 'fa-leaf', description: 'Score écologique > 80' },
+                    { type: 'advice', name: 'Conseiller', icon: 'fa-lightbulb', description: '50 conseils consultés' },
+                    { type: 'prediction', name: 'Prédicteur', icon: 'fa-chart-line', description: '10 prédictions' },
+                    { type: 'community', name: 'Communautaire', icon: 'fa-users', description: 'Partage actif' }
+                ];
+
+                const earnedBadgeNames = new Set(badges.map(b => b.badge_name));
+                
+                const badgesGrid = document.getElementById('badgesGrid');
+                badgesGrid.innerHTML = allBadges.map(badge => {
+                    const earned = earnedBadgeNames.has(badge.name);
+                    return `
+                        <div class="badge-item ${earned ? 'earned' : ''}">
+                            <div class="badge-icon">
+                                <i class="fas ${badge.icon}"></i>
+                            </div>
+                            <h4 style="margin: 0.5rem 0 0.25rem 0; font-size: 0.9rem;">${badge.name}</h4>
+                            <p style="margin: 0; font-size: 0.75rem; color: #6c757d;">${badge.description}</p>
+                            ${earned ? '<div style="margin-top: 0.5rem; color: #FFD700;"><i class="fas fa-check-circle"></i> Obtenu</div>' : ''}
+                        </div>
+                    `;
+                }).join('');
+            } catch (error) {
+                console.error('Erreur chargement badges:', error);
+            }
+        }
+
+        async function loadLeaderboard() {
+            try {
+                const result = await dbSync.getLeaderboard(10);
+                const leaderboard = result.leaderboard || [];
+                
+                const leaderboardTable = document.getElementById('leaderboardTable');
+                
+                if (leaderboard.length === 0) {
+                    leaderboardTable.innerHTML = '<p style="text-align: center; color: #6c757d;">Aucun classement disponible</p>';
+                    return;
+                }
+
+                leaderboardTable.innerHTML = `
+                    <div class="leaderboard-row" style="background: #f8f9fa; font-weight: 600;">
+                        <div>Rang</div>
+                        <div>Utilisateur</div>
+                        <div>Points</div>
+                        <div>Niveau</div>
+                    </div>
+                    ${leaderboard.map((user, index) => `
+                        <div class="leaderboard-row">
+                            <div class="rank ${index === 0 ? 'first' : ''}">${index + 1}</div>
+                            <div>${user.username} <small style="color: #6c757d;">(${user.user_type})</small></div>
+                            <div>${user.total_points}</div>
+                            <div>${user.level}</div>
+                        </div>
+                    `).join('')}
+                `;
+            } catch (error) {
+                console.error('Erreur chargement classement:', error);
+            }
+        }
+    </script>
+</body>
+</html>
+

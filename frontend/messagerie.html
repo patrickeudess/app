@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#667eea">
+    <title>Messagerie - Mon Cacao</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/modern-banner.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="js/auth.js"></script>
+    <script src="js/database-sync.js"></script>
+    <style>
+        .messaging-page {
+            padding: 2rem 0;
+            height: calc(100vh - 80px);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .page-header {
+            margin-bottom: 1.5rem;
+        }
+
+        .page-title {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .page-title h1 {
+            margin: 0;
+            font-size: 2rem;
+            color: #2c3e50;
+        }
+
+        .messaging-container {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 1.5rem;
+            flex: 1;
+            min-height: 0;
+        }
+
+        .contacts-panel {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+            overflow-y: auto;
+        }
+
+        .contacts-panel h3 {
+            margin: 0 0 1rem 0;
+            color: #2c3e50;
+        }
+
+        .contact-item {
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 0.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .contact-item:hover {
+            background: #f8f9fa;
+            border-color: #667eea;
+        }
+
+        .contact-item.active {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+            border-color: #667eea;
+        }
+
+        .contact-name {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 0.25rem;
+        }
+
+        .contact-preview {
+            font-size: 0.85rem;
+            color: #6c757d;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .unread-badge {
+            background: #dc3545;
+            color: white;
+            border-radius: 12px;
+            padding: 0.25rem 0.5rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-left: auto;
+        }
+
+        .chat-panel {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-header {
+            padding: 1.5rem;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 1.5rem;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .message {
+            max-width: 70%;
+            padding: 1rem;
+            border-radius: 15px;
+            word-wrap: break-word;
+        }
+
+        .message.sent {
+            align-self: flex-end;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .message.received {
+            align-self: flex-start;
+            background: #f8f9fa;
+            color: #2c3e50;
+        }
+
+        .message-time {
+            font-size: 0.75rem;
+            opacity: 0.7;
+            margin-top: 0.5rem;
+        }
+
+        .chat-input {
+            padding: 1.5rem;
+            border-top: 2px solid #e9ecef;
+            display: flex;
+            gap: 1rem;
+        }
+
+        .chat-input input {
+            flex: 1;
+            padding: 0.75rem 1rem;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            font-size: 1rem;
+        }
+
+        .chat-input button {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: #6c757d;
+        }
+
+        @media (max-width: 768px) {
+            .messaging-container {
+                grid-template-columns: 1fr;
+            }
+
+            .contacts-panel {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="app-header">
+        <div class="header-content">
+            <div class="header-left">
+                <div class="header-logo">
+                    <div class="logo-container">
+                        <i class="fas fa-seedling logo-plant"></i>
+                        <i class="fas fa-coins logo-coins"></i>
+                    </div>
+                    <div class="logo-text">
+                        <h1>Mon Cacao</h1>
+                    </div>
+                </div>
+                <div class="user-status">
+                    <div class="status-line">
+                        <i class="fas fa-circle status-dot"></i>
+                        <span>En ligne</span>
+                    </div>
+                    <div class="user-info">
+                        <i class="fas fa-building user-icon"></i>
+                        <span id="userTypeLabel">Professionnel</span>
+                    </div>
+                </div>
+            </div>
+            <div class="header-right">
+                <button class="btn-back" onclick="window.location.href='dashboard-professionnel.html'">
+                    <i class="fas fa-arrow-left"></i>
+                    <span>Retour</span>
+                </button>
+                <button class="btn-disconnect" onclick="changeUserType()">
+                    <i class="fas fa-exchange-alt"></i>
+                    <span>Changer de profil</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="main-content messaging-page">
+        <div class="content-container">
+            <div class="page-header">
+                <div class="page-title">
+                    <i class="fas fa-comments" style="color: #667eea; font-size: 2rem;"></i>
+                    <h1>Messagerie</h1>
+                </div>
+            </div>
+
+            <div class="messaging-container">
+                <div class="contacts-panel">
+                    <h3>Contacts</h3>
+                    <div id="contactsList">
+                        <!-- Les contacts seront chargés ici -->
+                    </div>
+                </div>
+
+                <div class="chat-panel">
+                    <div id="chatHeader" class="chat-header" style="display: none;">
+                        <h3 id="chatContactName">Sélectionnez un contact</h3>
+                    </div>
+                    <div id="chatMessages" class="chat-messages">
+                        <div class="empty-state">
+                            <i class="fas fa-comments" style="font-size: 4rem; margin-bottom: 1rem; color: #667eea;"></i>
+                            <h3>Sélectionnez un contact pour commencer</h3>
+                        </div>
+                    </div>
+                    <div id="chatInput" class="chat-input" style="display: none;">
+                        <input type="text" id="messageInput" placeholder="Tapez votre message...">
+                        <button onclick="sendMessage()">
+                            <i class="fas fa-paper-plane"></i> Envoyer
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        let currentContactId = null;
+        let currentUserId = null;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            checkAuthentication('professionnel');
+            updateUserTypeDisplay();
+            
+            currentUserId = parseInt(localStorage.getItem('current_user_id')) || null;
+            loadContacts();
+        });
+
+        function changeUserType() {
+            if (confirm('Voulez-vous changer de profil ? Vous serez déconnecté.')) {
+                localStorage.removeItem('user_type');
+                localStorage.removeItem('user_type_selected');
+                localStorage.removeItem('user_authenticated');
+                localStorage.removeItem('current_user_id');
+                localStorage.removeItem('current_user_name');
+                localStorage.removeItem('selected_user_type_for_auth');
+                window.location.href = 'user-type-selection.html';
+            }
+        }
+
+        async function loadContacts() {
+            // Charger les producteurs comme contacts
+            const producers = JSON.parse(localStorage.getItem('professional_producers') || '[]');
+            
+            const contactsList = document.getElementById('contactsList');
+            let html = '';
+
+            if (producers.length > 0) {
+                html = producers.map(producer => `
+                    <div class="contact-item" onclick="selectContact(${producer.id}, '${producer.name}')">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <div class="contact-name">${producer.name}</div>
+                                <div class="contact-preview">${producer.region || 'N/A'}</div>
+                            </div>
+                            <span class="unread-badge" id="unread-${producer.id}" style="display: none;">0</span>
+                        </div>
+                    </div>
+                `).join('');
+            } else {
+                html = '<p style="color: #6c757d; text-align: center;">Aucun contact disponible</p>';
+            }
+
+            contactsList.innerHTML = html;
+        }
+
+        async function selectContact(contactId, contactName) {
+            currentContactId = contactId;
+            
+            // Mettre à jour l'interface
+            document.getElementById('chatHeader').style.display = 'block';
+            document.getElementById('chatContactName').textContent = contactName;
+            document.getElementById('chatInput').style.display = 'flex';
+            document.getElementById('chatMessages').innerHTML = '';
+
+            // Mettre à jour les contacts actifs
+            document.querySelectorAll('.contact-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            event.currentTarget.classList.add('active');
+
+            // Charger les messages
+            await loadMessages(contactId);
+        }
+
+        async function loadMessages(contactId) {
+            const messagesDiv = document.getElementById('chatMessages');
+            
+            try {
+                const result = await dbSync.getMessages(currentUserId, 'inbox');
+                const messages = result.messages || [];
+                
+                // Filtrer les messages avec ce contact
+                const conversationMessages = messages.filter(m => 
+                    (m.sender_id === contactId && m.receiver_id === currentUserId) ||
+                    (m.sender_id === currentUserId && m.receiver_id === contactId)
+                ).sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+
+                if (conversationMessages.length === 0) {
+                    messagesDiv.innerHTML = `
+                        <div class="empty-state">
+                            <p>Aucun message avec ${document.getElementById('chatContactName').textContent}</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                messagesDiv.innerHTML = conversationMessages.map(msg => {
+                    const isSent = msg.sender_id === currentUserId;
+                    const date = new Date(msg.created_at);
+                    return `
+                        <div class="message ${isSent ? 'sent' : 'received'}">
+                            <div>${msg.content}</div>
+                            <div class="message-time">${date.toLocaleString('fr-FR')}</div>
+                        </div>
+                    `;
+                }).join('');
+
+                // Scroll vers le bas
+                messagesDiv.scrollTop = messagesDiv.scrollHeight;
+            } catch (error) {
+                console.error('Erreur chargement messages:', error);
+            }
+        }
+
+        async function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const content = input.value.trim();
+
+            if (!content || !currentContactId) return;
+
+            try {
+                const result = await dbSync.sendMessage(
+                    currentUserId,
+                    currentContactId,
+                    'Message',
+                    content
+                );
+
+                if (result.success) {
+                    input.value = '';
+                    await loadMessages(currentContactId);
+                }
+            } catch (error) {
+                console.error('Erreur envoi message:', error);
+            }
+        }
+
+        // Envoyer avec Enter
+        document.getElementById('messageInput')?.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+    </script>
+</body>
+</html>
+

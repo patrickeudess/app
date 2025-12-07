@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Revenus - Mon Cacao</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/modern-banner.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="js/auth.js"></script>
+    <script>
+        // Vérifier l'authentification au chargement
+        document.addEventListener('DOMContentLoaded', function() {
+            if (checkAuthentication('producteur')) {
+                updateUserTypeDisplay();
+            }
+        });
+    </script>
+</head>
+<body>
+    <!-- Header harmonisé -->
+    <header class="app-header">
+        <div class="header-content">
+            <div class="header-left">
+            <div class="header-logo">
+                    <div class="logo-container">
+                        <i class="fas fa-seedling logo-plant"></i>
+                        <i class="fas fa-coins logo-coins"></i>
+                    </div>
+                    <div class="logo-text">
+                        <h1>Mon Cacao</h1>
+                    </div>
+                </div>
+                <div class="user-status">
+                    <div class="status-line">
+                        <i class="fas fa-circle status-dot"></i>
+                        <span>En ligne</span>
+                    </div>
+                    <div class="user-info">
+                        <i class="fas fa-user user-icon"></i>
+                        <span id="userTypeLabel">Producteur</span>
+                    </div>
+            </div>
+                </div>
+            <div class="header-right">
+                <button class="btn-change-profile" onclick="changeUserType()" title="Changer de profil">
+                    <i class="fas fa-exchange-alt"></i>
+                    <span>Changer de profil</span>
+                </button>
+                <a href="index.html" class="btn-back">
+                    <i class="fas fa-arrow-left"></i>
+                    <span>Retour</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Section Revenus -->
+    <main class="main-content">
+        <div class="content-container">
+            <div class="section-header">
+                <h1 class="section-title">
+                    <i class="fas fa-coins"></i>
+                    Revenus et Bénéfices
+                </h1>
+                <p class="section-subtitle">Suivi de vos bénéfices et marges</p>
+            </div>
+            
+            <div class="revenue-container">
+                <!-- Cartes de revenus -->
+                <div class="revenue-cards">
+                    <div class="revenue-card total">
+                        <div class="revenue-icon">
+                            <i class="fas fa-coins"></i>
+                        </div>
+                        <div class="revenue-content">
+                            <h3>Revenu Total</h3>
+                            <div class="revenue-value">1,800,000 FCFA</div>
+                            <div class="revenue-change positive">+15% vs mois dernier</div>
+                        </div>
+                    </div>
+                    
+                    <div class="revenue-card profit">
+                        <div class="revenue-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <div class="revenue-content">
+                            <h3>Bénéfice Net</h3>
+                            <div class="revenue-value">1,350,000 FCFA</div>
+                            <div class="revenue-change positive">+20% vs mois dernier</div>
+                        </div>
+                    </div>
+                    
+                    <div class="revenue-card margin">
+                        <div class="revenue-icon">
+                            <i class="fas fa-percentage"></i>
+                        </div>
+                        <div class="revenue-content">
+                            <h3>Marge Bénéficiaire</h3>
+                            <div class="revenue-value">75%</div>
+                            <div class="revenue-change positive">+5% vs mois dernier</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Détails financiers -->
+                <div class="financial-details">
+                    <div class="detail-section">
+                        <h3>Détails des Revenus</h3>
+                        <div class="detail-grid">
+                            <div class="detail-item">
+                                <span class="detail-label">Production vendue</span>
+                                <span class="detail-value">2.4 tonnes</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Prix de vente moyen</span>
+                                <span class="detail-value">750,000 FCFA/tonne</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Revenu brut</span>
+                                <span class="detail-value">1,800,000 FCFA</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="detail-section">
+                        <h3>Détails des Coûts</h3>
+                        <div class="detail-grid">
+                            <div class="detail-item">
+                                <span class="detail-label">Coûts de production</span>
+                                <span class="detail-value">450,000 FCFA</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Main d'œuvre</span>
+                                <span class="detail-value">200,000 FCFA</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Coûts totaux</span>
+                                <span class="detail-value">450,000 FCFA</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Graphiques -->
+                <div class="revenue-charts">
+                    <div class="chart-card">
+                        <h3>Évolution des Revenus</h3>
+                        <canvas id="revenue-chart" width="400" height="200"></canvas>
+                    </div>
+                    
+                    <div class="chart-card">
+                        <h3>Répartition des Coûts</h3>
+                        <canvas id="cost-breakdown-chart" width="400" height="200"></canvas>
+                    </div>
+                </div>
+                
+                <!-- Projections -->
+                <div class="projections-section">
+                    <h3>Projections Financières</h3>
+                    <div class="projections-grid">
+                        <div class="projection-card">
+                            <h4>Prochain Mois</h4>
+                            <div class="projection-value">1,950,000 FCFA</div>
+                            <div class="projection-change positive">+8% estimé</div>
+                        </div>
+                        
+                        <div class="projection-card">
+                            <h4>3 Mois</h4>
+                            <div class="projection-value">2,100,000 FCFA</div>
+                            <div class="projection-change positive">+17% estimé</div>
+                        </div>
+                        
+                        <div class="projection-card">
+                            <h4>6 Mois</h4>
+                            <div class="projection-value">2,400,000 FCFA</div>
+                            <div class="projection-change positive">+33% estimé</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="js/script.js"></script>
+    <script>
+        // Initialisation des graphiques
+        document.addEventListener('DOMContentLoaded', function() {
+            // Graphique des revenus
+            const revenueCtx = document.getElementById('revenue-chart').getContext('2d');
+            new Chart(revenueCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin'],
+                    datasets: [{
+                        label: 'Revenus (FCFA)',
+                        data: [1200000, 1350000, 1500000, 1650000, 1800000, 1800000],
+                        backgroundColor: '#2E8B57',
+                        borderColor: '#2E8B57',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+            
+            // Graphique de répartition des coûts
+            const costBreakdownCtx = document.getElementById('cost-breakdown-chart').getContext('2d');
+            new Chart(costBreakdownCtx, {
+                type: 'pie',
+                data: {
+                    labels: ['Engrais', 'Main d\'œuvre', 'Pesticides', 'Transport'],
+                    datasets: [{
+                        data: [40, 30, 20, 10],
+                        backgroundColor: ['#2E8B57', '#FFD700', '#FF6B6B', '#4ECDC4']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>

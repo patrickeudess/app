@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#667eea">
+    <title>Mes Producteurs - Mon Cacao</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/modern-banner.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="js/auth.js"></script>
+    <style>
+        .producers-page {
+            padding: 2rem 0;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .page-title {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .page-title h1 {
+            margin: 0;
+            font-size: 2rem;
+            color: #2c3e50;
+        }
+
+        .page-title i {
+            font-size: 2rem;
+            color: #667eea;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+            padding: 0.75rem 1.5rem;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn-secondary:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .stats-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .stat-card .stat-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        .stat-card .stat-icon.producers {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+        }
+
+        .stat-card .stat-icon.submissions {
+            background: linear-gradient(135deg, #2E8B57, #3CB371);
+        }
+
+        .stat-card .stat-icon.production {
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+        }
+
+        .stat-card h3 {
+            margin: 0 0 0.5rem 0;
+            color: #6c757d;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .stat-card .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #2c3e50;
+            margin: 0;
+        }
+
+        .producers-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .producer-card {
+            background: white;
+            border: 2px solid #e9ecef;
+            border-radius: 15px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .producer-card:hover {
+            border-color: #667eea;
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.2);
+            transform: translateY(-5px);
+        }
+
+        .producer-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 1rem;
+        }
+
+        .producer-card h3 {
+            margin: 0;
+            color: #2c3e50;
+            font-size: 1.25rem;
+        }
+
+        .producer-badge {
+            background: #2E8B57;
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .producer-info {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .producer-info-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+
+        .producer-info-item i {
+            color: #667eea;
+            width: 20px;
+        }
+
+        .producer-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid #e9ecef;
+        }
+
+        .btn-action {
+            flex: 1;
+            padding: 0.5rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.85rem;
+        }
+
+        .btn-view {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-view:hover {
+            background: #5568d3;
+        }
+
+        .add-producer-card {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
+            border: 2px dashed #667eea;
+            border-radius: 15px;
+            padding: 3rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 250px;
+        }
+
+        .add-producer-card:hover {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+            border-color: #5568d3;
+        }
+
+        .add-producer-card i {
+            font-size: 4rem;
+            color: #667eea;
+            margin-bottom: 1rem;
+        }
+
+        .add-producer-card h3 {
+            color: #667eea;
+            margin: 0 0 0.5rem 0;
+        }
+
+        .add-producer-card p {
+            color: #6c757d;
+            margin: 0;
+        }
+
+        @media (max-width: 768px) {
+            .producers-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .page-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .stats-cards {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .stats-cards {
+                grid-template-columns: 1fr;
+            }
+
+            .action-buttons {
+                width: 100%;
+            }
+
+            .btn-primary, .btn-secondary {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header harmonisé -->
+    <header class="app-header">
+        <div class="header-content">
+            <div class="header-left">
+                <div class="header-logo">
+                    <div class="logo-container">
+                        <i class="fas fa-seedling logo-plant"></i>
+                        <i class="fas fa-coins logo-coins"></i>
+                    </div>
+                    <div class="logo-text">
+                        <h1>Mon Cacao</h1>
+                    </div>
+                </div>
+                <div class="user-status">
+                    <div class="status-line">
+                        <i class="fas fa-circle status-dot"></i>
+                        <span>En ligne</span>
+                    </div>
+                    <div class="user-info">
+                        <i class="fas fa-building user-icon"></i>
+                        <span id="userTypeLabel">Professionnel</span>
+                    </div>
+                </div>
+            </div>
+            <div class="header-right">
+                <button class="btn-back" onclick="window.location.href='dashboard-professionnel.html'">
+                    <i class="fas fa-arrow-left"></i>
+                    <span>Retour</span>
+                </button>
+                <button class="btn-disconnect" onclick="changeUserType()">
+                    <i class="fas fa-exchange-alt"></i>
+                    <span>Changer de profil</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="main-content producers-page">
+        <div class="content-container">
+            <div class="page-header">
+                <div class="page-title">
+                    <i class="fas fa-users"></i>
+                    <h1>Mes Producteurs</h1>
+                </div>
+                <div class="action-buttons">
+                    <button class="btn-secondary" onclick="refreshData()">
+                        <i class="fas fa-sync-alt"></i>
+                        <span>Actualiser</span>
+                    </button>
+                    <button class="btn-primary" onclick="addProducer()">
+                        <i class="fas fa-plus"></i>
+                        <span>Ajouter un producteur</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Statistiques -->
+            <div class="stats-cards">
+                <div class="stat-card">
+                    <div class="stat-icon producers">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h3>Total Producteurs</h3>
+                    <p class="stat-value" id="totalProducers">0</p>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon submissions">
+                        <i class="fas fa-file-alt"></i>
+                    </div>
+                    <h3>Soumissions</h3>
+                    <p class="stat-value" id="totalSubmissions">0</p>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon production">
+                        <i class="fas fa-seedling"></i>
+                    </div>
+                    <h3>Production Totale</h3>
+                    <p class="stat-value" id="totalProduction">0</p>
+                    <small style="color: #6c757d;">kg</small>
+                </div>
+            </div>
+
+            <!-- Grille des producteurs -->
+            <div class="producers-grid" id="producersGrid">
+                <!-- Les producteurs seront chargés dynamiquement -->
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Vérifier l'authentification
+        document.addEventListener('DOMContentLoaded', function() {
+            checkAuthentication('professionnel');
+            updateUserTypeDisplay();
+            loadProducers();
+        });
+
+        function changeUserType() {
+            if (confirm('Voulez-vous changer de profil ? Vous serez déconnecté.')) {
+                localStorage.removeItem('user_type');
+                localStorage.removeItem('user_type_selected');
+                localStorage.removeItem('user_authenticated');
+                localStorage.removeItem('current_user_id');
+                localStorage.removeItem('current_user_name');
+                localStorage.removeItem('selected_user_type_for_auth');
+                window.location.href = 'user-type-selection.html';
+            }
+        }
+
+        function loadProducers() {
+            const professionalProducers = JSON.parse(localStorage.getItem('professional_producers')) || [];
+            const allProducerData = JSON.parse(localStorage.getItem('all_producer_submissions')) || {};
+            
+            // Calculer les statistiques
+            let totalSubmissions = 0;
+            let totalProduction = 0;
+
+            const producersWithData = professionalProducers.map(producer => {
+                const submissions = allProducerData[producer.id] || [];
+                let producerProduction = 0;
+
+                submissions.forEach(sub => {
+                    if (sub.production_reelle) {
+                        producerProduction += parseFloat(sub.production_reelle) || 0;
+                    }
+                    totalSubmissions++;
+                });
+
+                totalProduction += producerProduction;
+
+                return {
+                    ...producer,
+                    submissionsCount: submissions.length,
+                    production: producerProduction,
+                    lastSubmission: submissions.length > 0 ? submissions[submissions.length - 1]?.date_soumission : null
+                };
+            });
+
+            // Mettre à jour les statistiques
+            document.getElementById('totalProducers').textContent = professionalProducers.length;
+            document.getElementById('totalSubmissions').textContent = totalSubmissions;
+            document.getElementById('totalProduction').textContent = totalProduction.toLocaleString();
+
+            // Afficher les producteurs
+            const producersGrid = document.getElementById('producersGrid');
+            let html = '';
+
+            if (producersWithData.length > 0) {
+                html = producersWithData.map(producer => `
+                    <div class="producer-card" onclick="viewProducer('${producer.id}')">
+                        <div class="producer-card-header">
+                            <h3>${producer.name}</h3>
+                            ${producer.submissionsCount > 0 ? `<span class="producer-badge">${producer.submissionsCount} soumission${producer.submissionsCount > 1 ? 's' : ''}</span>` : '<span style="color: #6c757d; font-size: 0.85rem;">Aucune donnée</span>'}
+                        </div>
+                        <div class="producer-info">
+                            <div class="producer-info-item">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span>${producer.region || 'Non spécifié'}</span>
+                            </div>
+                            ${producer.code ? `
+                            <div class="producer-info-item">
+                                <i class="fas fa-key"></i>
+                                <span style="font-family: monospace; color: #667eea;">${producer.code}</span>
+                            </div>
+                            ` : ''}
+                            ${producer.production > 0 ? `
+                            <div class="producer-info-item">
+                                <i class="fas fa-seedling"></i>
+                                <span>${producer.production.toLocaleString()} kg</span>
+                            </div>
+                            ` : ''}
+                            ${producer.lastSubmission ? `
+                            <div class="producer-info-item">
+                                <i class="fas fa-calendar"></i>
+                                <span>Dernière soumission: ${new Date(producer.lastSubmission).toLocaleDateString('fr-FR')}</span>
+                            </div>
+                            ` : ''}
+                        </div>
+                        <div class="producer-actions">
+                            <button class="btn-action btn-view" onclick="event.stopPropagation(); viewProducer('${producer.id}')">
+                                <i class="fas fa-eye"></i> Voir détails
+                            </button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            // Ajouter la carte d'ajout
+            html += `
+                <div class="add-producer-card" onclick="addProducer()">
+                    <i class="fas fa-user-plus"></i>
+                    <h3>Ajouter un producteur</h3>
+                    <p>Cliquez pour créer un nouveau producteur</p>
+                </div>
+            `;
+
+            producersGrid.innerHTML = html;
+        }
+
+        function viewProducer(producerId) {
+            window.location.href = `producteur-details.html?id=${producerId}`;
+        }
+
+        function addProducer() {
+            const modal = document.getElementById('addProducerModal');
+            if (modal) {
+                modal.style.display = 'flex';
+            } else {
+                createAddProducerModal();
+            }
+        }
+
+        function createAddProducerModal() {
+            const modal = document.createElement('div');
+            modal.id = 'addProducerModal';
+            modal.className = 'producer-modal';
+            modal.style.display = 'flex';
+            modal.innerHTML = `
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2>
+                            <i class="fas fa-user-plus"></i>
+                            Ajouter un nouveau producteur
+                        </h2>
+                        <button class="modal-close" onclick="closeProducerModal()">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="addProducerForm" onsubmit="saveProducer(event)">
+                            <div class="form-group">
+                                <label for="producerName">
+                                    <i class="fas fa-user"></i>
+                                    Nom complet du producteur *
+                                </label>
+                                <input type="text" id="producerName" required placeholder="Ex: Jean Kouassi">
+                            </div>
+                            <div class="form-group">
+                                <label for="producerRegion">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    Région *
+                                </label>
+                                <select id="producerRegion" required>
+                                    <option value="">Sélectionner une région</option>
+                                    <option value="Abidjan">Abidjan</option>
+                                    <option value="Yamoussoukro">Yamoussoukro</option>
+                                    <option value="Bouaké">Bouaké</option>
+                                    <option value="San-Pédro">San-Pédro</option>
+                                    <option value="Daloa">Daloa</option>
+                                    <option value="Korhogo">Korhogo</option>
+                                    <option value="Man">Man</option>
+                                    <option value="Gagnoa">Gagnoa</option>
+                                    <option value="Abengourou">Abengourou</option>
+                                    <option value="Divo">Divo</option>
+                                    <option value="Autre">Autre</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="producerPhone">
+                                    <i class="fas fa-phone"></i>
+                                    Téléphone (optionnel)
+                                </label>
+                                <input type="tel" id="producerPhone" placeholder="Ex: +225 07 12 34 56 78">
+                            </div>
+                            <div class="modal-actions">
+                                <button type="button" class="btn-cancel" onclick="closeProducerModal()">
+                                    <i class="fas fa-times"></i>
+                                    Annuler
+                                </button>
+                                <button type="submit" class="btn-submit">
+                                    <i class="fas fa-check"></i>
+                                    Créer
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+
+        function closeProducerModal() {
+            const modal = document.getElementById('addProducerModal');
+            if (modal) {
+                modal.remove();
+            }
+        }
+
+        function saveProducer(event) {
+            event.preventDefault();
+            
+            const name = document.getElementById('producerName').value.trim();
+            const region = document.getElementById('producerRegion').value;
+            const phone = document.getElementById('producerPhone').value.trim();
+
+            if (!name || !region) {
+                alert('Veuillez remplir tous les champs obligatoires.');
+                return;
+            }
+
+            // Générer un code unique pour le producteur
+            const timestamp = Date.now();
+            const random = Math.random().toString(36).substring(2, 7).toUpperCase();
+            const producerCode = `PROD-${timestamp.toString().slice(-5)}-${random}`;
+
+            // Créer l'objet producteur
+            const producer = {
+                id: `producer_${timestamp}_${random}`,
+                name: name,
+                region: region,
+                phone: phone || null,
+                code: producerCode,
+                createdAt: new Date().toISOString(),
+                professionalId: localStorage.getItem('current_user_id') || 'default_professional'
+            };
+
+            // Sauvegarder dans localStorage
+            const professionalProducers = JSON.parse(localStorage.getItem('professional_producers')) || [];
+            professionalProducers.push(producer);
+            localStorage.setItem('professional_producers', JSON.stringify(professionalProducers));
+
+            // Fermer le modal
+            closeProducerModal();
+
+            // Afficher le code du producteur
+            showProducerCode(producerCode, name);
+
+            // Recharger la liste
+            loadProducers();
+        }
+
+        function showProducerCode(code, name) {
+            const modal = document.createElement('div');
+            modal.className = 'producer-modal';
+            modal.style.display = 'flex';
+            modal.innerHTML = `
+                <div class="modal-content" style="max-width: 500px;">
+                    <div class="modal-header">
+                        <h2>
+                            <i class="fas fa-check-circle" style="color: #2E8B57;"></i>
+                            Producteur créé avec succès !
+                        </h2>
+                        <button class="modal-close" onclick="this.closest('.producer-modal').remove()">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <p style="margin-bottom: 1.5rem;">
+                            Le producteur <strong>${name}</strong> a été créé avec succès.
+                        </p>
+                        <div style="background: #f8f9fa; padding: 1.5rem; border-radius: 10px; margin-bottom: 1.5rem;">
+                            <label style="display: block; margin-bottom: 0.5rem; color: #6c757d; font-size: 0.9rem;">
+                                Code producteur à partager :
+                            </label>
+                            <div style="display: flex; gap: 0.5rem; align-items: center;">
+                                <input type="text" id="producerCodeDisplay" value="${code}" readonly 
+                                    style="flex: 1; padding: 0.75rem; border: 2px solid #667eea; border-radius: 8px; 
+                                    font-family: monospace; font-size: 1.1rem; font-weight: 600; text-align: center; 
+                                    background: white; color: #667eea;">
+                                <button onclick="copyProducerCode()" 
+                                    style="padding: 0.75rem 1.5rem; background: #667eea; color: white; 
+                                    border: none; border-radius: 8px; cursor: pointer; font-weight: 600;">
+                                    <i class="fas fa-copy"></i> Copier
+                                </button>
+                            </div>
+                        </div>
+                        <p style="color: #6c757d; font-size: 0.9rem; margin: 0;">
+                            Partagez ce code avec le producteur pour qu'il puisse associer ses données à votre compte.
+                        </p>
+                        <div class="modal-actions" style="margin-top: 1.5rem;">
+                            <button class="btn-submit" onclick="this.closest('.producer-modal').remove()" style="width: 100%;">
+                                <i class="fas fa-check"></i>
+                                Compris
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+
+        function copyProducerCode() {
+            const codeInput = document.getElementById('producerCodeDisplay');
+            codeInput.select();
+            document.execCommand('copy');
+            
+            const btn = event.target.closest('button');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-check"></i> Copié !';
+            btn.style.background = '#2E8B57';
+            
+            setTimeout(() => {
+                btn.innerHTML = originalText;
+                btn.style.background = '#667eea';
+            }, 2000);
+        }
+
+        function refreshData() {
+            loadProducers();
+            // Animation de rafraîchissement
+            const btn = event.target.closest('button');
+            const icon = btn.querySelector('i');
+            icon.style.animation = 'spin 1s linear';
+            setTimeout(() => {
+                icon.style.animation = '';
+            }, 1000);
+        }
+
+        // Ajouter l'animation de rotation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes spin {
+                from { transform: rotate(0deg); }
+                to { transform: rotate(360deg); }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>
+

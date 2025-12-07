@@ -1,0 +1,229 @@
+/* Bannière moderne uniformisée - Mon Cacao */
+:root {
+    --banner-primary: #2E8B57;
+    --banner-secondary: #3CB371;
+    --banner-accent: #28a745;
+    --banner-text: #FFFFFF;
+    --banner-shadow: rgba(0, 0, 0, 0.15);
+    --status-online: #28a745;
+    --status-offline: #dc3545;
+}
+
+/* Bannière moderne avec effets */
+.modern-header {
+    background: linear-gradient(135deg, var(--banner-primary) 0%, var(--banner-secondary) 100%);
+    padding: 20px 25px;
+    margin: -1rem -1rem 2rem -1rem;
+    border-radius: 0 0 20px 20px;
+    box-shadow: 0 6px 20px var(--banner-shadow);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: var(--banner-text);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    position: relative;
+    overflow: hidden;
+    min-height: 80px;
+}
+
+/* Effet de brillance */
+.modern-header::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.1) 50%, transparent 70%);
+    animation: shine 3s infinite;
+    pointer-events: none;
+}
+
+@keyframes shine {
+    0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+    100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+}
+
+/* Logo et titre */
+.header-brand {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    position: relative;
+    z-index: 2;
+}
+
+/* Styles logo-container remplacés par style.css pour uniformisation */
+.logo-container {
+    /* Styles déplacés dans style.css pour uniformisation */
+}
+
+.logo-icon {
+    font-size: 30px;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+    margin-right: 8px;
+}
+
+.logo-text {
+    font-size: 30px;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+}
+
+.brand-info h1 {
+    margin: 0;
+    font-size: 32px;
+    font-weight: 800;
+    color: var(--banner-text);
+    text-shadow: 0 3px 6px rgba(0,0,0,0.3);
+    letter-spacing: 1px;
+}
+
+.brand-status {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 15px;
+    margin-top: 6px;
+}
+
+.status-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    display: inline-block;
+    box-shadow: 0 0 8px currentColor;
+    animation: pulse 2s infinite;
+}
+
+.status-dot.online {
+    background-color: var(--status-online);
+    color: var(--status-online);
+}
+
+.status-dot.offline {
+    background-color: var(--status-offline);
+    color: var(--status-offline);
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.7; transform: scale(1.1); }
+}
+
+.status-text {
+    font-weight: 600;
+}
+
+.user-info {
+    margin-left: 20px;
+    opacity: 0.9;
+}
+
+.page-context {
+    margin-left: 20px;
+    opacity: 0.8;
+    font-size: 13px;
+    background: rgba(255,255,255,0.1);
+    padding: 4px 8px;
+    border-radius: 6px;
+}
+
+/* Actions de droite */
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    position: relative;
+    z-index: 2;
+}
+
+.user-display {
+    font-size: 14px;
+    opacity: 0.9;
+}
+
+.btn-modern {
+    background: linear-gradient(135deg, var(--banner-accent), #20c997);
+    color: var(--banner-text);
+    border: none;
+    padding: 10px 18px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 14px;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+    text-decoration: none;
+}
+
+.btn-modern:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+.btn-modern i {
+    font-size: 16px;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .modern-header {
+        padding: 15px 20px;
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+    }
+    
+    .header-brand {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .brand-info h1 {
+        font-size: 28px;
+    }
+    
+    .brand-status {
+        justify-content: center;
+    }
+    
+    .header-actions {
+        flex-direction: column;
+        gap: 10px;
+    }
+}
+
+/* Animations supplémentaires */
+.logo-container {
+    animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-5px); }
+}
+
+/* Effet de particules */
+.modern-header::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: 
+        radial-gradient(circle at 20% 50%, rgba(255,255,255,0.1) 1px, transparent 1px),
+        radial-gradient(circle at 80% 20%, rgba(255,255,255,0.1) 1px, transparent 1px),
+        radial-gradient(circle at 40% 80%, rgba(255,255,255,0.1) 1px, transparent 1px);
+    background-size: 50px 50px, 30px 30px, 40px 40px;
+    animation: sparkle 4s linear infinite;
+    pointer-events: none;
+}
+
+@keyframes sparkle {
+    0% { transform: translateY(0px); }
+    100% { transform: translateY(-50px); }
+}

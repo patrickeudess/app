@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#dc3545">
+    <title>Rapports - Mon Cacao</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/modern-banner.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="js/auth.js"></script>
+    <style>
+        .reports-page {
+            padding: 2rem 0;
+        }
+
+        .page-header {
+            margin-bottom: 2rem;
+        }
+
+        .page-title {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .page-title h1 {
+            margin: 0;
+            font-size: 2rem;
+            color: #2c3e50;
+        }
+
+        .page-title i {
+            font-size: 2rem;
+            color: #dc3545;
+        }
+
+        .export-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .export-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .export-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .export-card .icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            font-size: 2rem;
+            color: white;
+        }
+
+        .export-card h3 {
+            margin: 0 0 0.5rem 0;
+            color: #2c3e50;
+        }
+
+        .export-card p {
+            margin: 0;
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            .export-options {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="app-header">
+        <div class="header-content">
+            <div class="header-left">
+                <div class="header-logo">
+                    <div class="logo-container">
+                        <i class="fas fa-seedling logo-plant"></i>
+                        <i class="fas fa-coins logo-coins"></i>
+                    </div>
+                    <div class="logo-text">
+                        <h1>Mon Cacao</h1>
+                    </div>
+                </div>
+                <div class="user-status">
+                    <div class="status-line">
+                        <i class="fas fa-circle status-dot"></i>
+                        <span>En ligne</span>
+                    </div>
+                    <div class="user-info">
+                        <i class="fas fa-building user-icon"></i>
+                        <span id="userTypeLabel">Professionnel</span>
+                    </div>
+                </div>
+            </div>
+            <div class="header-right">
+                <button class="btn-back" onclick="window.location.href='dashboard-professionnel.html'">
+                    <i class="fas fa-arrow-left"></i>
+                    <span>Retour</span>
+                </button>
+                <button class="btn-disconnect" onclick="changeUserType()">
+                    <i class="fas fa-exchange-alt"></i>
+                    <span>Changer de profil</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="main-content reports-page">
+        <div class="content-container">
+            <div class="page-header">
+                <div class="page-title">
+                    <i class="fas fa-file-pdf"></i>
+                    <h1>Rapports et Export</h1>
+                </div>
+            </div>
+
+            <div class="export-options">
+                <div class="export-card" onclick="exportData('csv')">
+                    <div class="icon" style="background: linear-gradient(135deg, #28a745, #20c997);">
+                        <i class="fas fa-file-csv"></i>
+                    </div>
+                    <h3>Exporter en CSV</h3>
+                    <p>Exportez toutes les données au format CSV pour Excel</p>
+                </div>
+
+                <div class="export-card" onclick="exportData('json')">
+                    <div class="icon" style="background: linear-gradient(135deg, #667eea, #764ba2);">
+                        <i class="fas fa-file-code"></i>
+                    </div>
+                    <h3>Exporter en JSON</h3>
+                    <p>Exportez toutes les données au format JSON</p>
+                </div>
+
+                <div class="export-card" onclick="generatePDF()">
+                    <div class="icon" style="background: linear-gradient(135deg, #dc3545, #c82333);">
+                        <i class="fas fa-file-pdf"></i>
+                    </div>
+                    <h3>Générer un PDF</h3>
+                    <p>Créez un rapport PDF complet avec toutes les statistiques</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            checkAuthentication('professionnel');
+            updateUserTypeDisplay();
+        });
+
+        function changeUserType() {
+            if (confirm('Voulez-vous changer de profil ? Vous serez déconnecté.')) {
+                localStorage.removeItem('user_type');
+                localStorage.removeItem('user_type_selected');
+                localStorage.removeItem('user_authenticated');
+                localStorage.removeItem('current_user_id');
+                localStorage.removeItem('current_user_name');
+                localStorage.removeItem('selected_user_type_for_auth');
+                window.location.href = 'user-type-selection.html';
+            }
+        }
+
+        function exportData(format) {
+            const professionalProducers = JSON.parse(localStorage.getItem('professional_producers')) || [];
+            const allProducerData = JSON.parse(localStorage.getItem('all_producer_submissions')) || {};
+            const adviceTracking = JSON.parse(localStorage.getItem('advice_tracking') || '{}');
+            
+            const exportData = {
+                producers: professionalProducers,
+                submissions: allProducerData,
+                advice: adviceTracking,
+                exportDate: new Date().toISOString()
+            };
+
+            if (format === 'csv') {
+                exportToCSV(exportData);
+            } else if (format === 'json') {
+                exportToJSON(exportData);
+            }
+        }
+
+        async function generatePDF() {
+            const professionalId = parseInt(localStorage.getItem('current_user_id'));
+            
+            if (!professionalId) {
+                alert('Vous devez être connecté pour générer un PDF');
+                return;
+            }
+
+            try {
+                const response = await fetch(`http://localhost:5000/api/pdf/report/professional/${professionalId}`);
+                
+                if (response.ok) {
+                    const blob = await response.blob();
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `rapport_professionnel_${professionalId}_${new Date().toISOString().split('T')[0]}.pdf`;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    window.URL.revokeObjectURL(url);
+                } else {
+                    alert('Erreur lors de la génération du PDF');
+                }
+            } catch (error) {
+                console.error('Erreur génération PDF:', error);
+                alert('Erreur de connexion. Vérifiez que le serveur backend est démarré.');
+            }
+        }
+
+        function exportToCSV(data) {
+            let csv = 'Producteur,Région,Production (kg),Revenus (FCFA),Soumissions\n';
+            
+            data.producers.forEach(producer => {
+                const submissions = data.submissions[producer.id] || [];
+                let totalProduction = 0;
+                let totalRevenue = 0;
+                
+                submissions.forEach(sub => {
+                    if (sub.production_reelle) totalProduction += parseFloat(sub.production_reelle) || 0;
+                    if (sub.revenu_total) totalRevenue += parseFloat(sub.revenu_total) || 0;
+                });
+                
+                csv += `"${producer.name}","${producer.region || ''}",${totalProduction},${totalRevenue},${submissions.length}\n`;
+            });
+            
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `rapport_cacao_${new Date().toISOString().split('T')[0]}.csv`;
+            link.click();
+        }
+
+        function exportToJSON(data) {
+            const json = JSON.stringify(data, null, 2);
+            const blob = new Blob([json], { type: 'application/json;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `rapport_cacao_${new Date().toISOString().split('T')[0]}.json`;
+            link.click();
+        }
+    </script>
+</body>
+</html>
+

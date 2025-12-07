@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estimation - Mon Cacao</title>
+    <link rel="stylesheet" href="css/modern-banner.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="js/modern-banner.js"></script>
+    <script src="js/auth.js"></script>
+
+    <script>
+        // Vérifier l'authentification au chargement
+        document.addEventListener('DOMContentLoaded', function() {
+            if (checkAuthentication('producteur')) {
+                updateUserTypeDisplay();
+            }
+        });
+
+        function lireTexte(texte) {
+            if ('speechSynthesis' in window) {
+                const utterance = new SpeechSynthesisUtterance(texte);
+                utterance.lang = 'fr-FR';
+                utterance.rate = 0.8;
+                speechSynthesis.speak(utterance);
+            }
+        }
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            // Boutons audio seulement sur les labels (questions)
+            const labels = document.querySelectorAll('label');
+            labels.forEach(label => {
+                if (!label.querySelector('.btn-audio')) {
+                    const btnAudio = document.createElement('button');
+                    btnAudio.className = 'btn-audio';
+                    btnAudio.innerHTML = '<i class="fas fa-volume-up"></i>';
+                    btnAudio.title = 'Écouter';
+                    btnAudio.onclick = () => lireTexte(label.textContent);
+                    label.appendChild(btnAudio);
+                }
+            });
+        });
+    </script>
+</head>
+<body>
+    <!-- Header harmonisé -->
+    <header class="app-header">
+        <div class="header-content">
+            <div class="header-left">
+            <div class="header-logo">
+                    <div class="logo-container">
+                        <i class="fas fa-seedling logo-plant"></i>
+                        <i class="fas fa-coins logo-coins"></i>
+                    </div>
+                    <div class="logo-text">
+                        <h1>Mon Cacao</h1>
+                    </div>
+            </div>
+                <div class="user-status">
+                    <div class="status-line">
+                        <i class="fas fa-circle status-dot"></i>
+                    <span>En ligne</span>
+                </div>
+                    <div class="user-info">
+                        <i class="fas fa-user user-icon"></i>
+                        <span id="userTypeLabel">Producteur</span>
+                    </div>
+                </div>
+            </div>
+            <div class="header-right">
+                <button class="btn-change-profile" onclick="changeUserType()" title="Changer de profil">
+                    <i class="fas fa-exchange-alt"></i>
+                    <span>Changer de profil</span>
+                </button>
+                <a href="index.html" class="btn-back">
+                    <i class="fas fa-arrow-left"></i>
+                    <span>Retour</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Section Estimation -->
+    <main class="main-content">
+        <div class="content-container">
+            <div class="section-header">
+                <h1 class="section-title">
+                    <i class="fas fa-chart-line"></i>
+                    Prédire ma Récolte
+                </h1>
+            <p class="section-subtitle">Remplissez les informations pour calculer votre production de cacao</p>
+            </div>
+            
+            <!-- Container de prédiction -->
+            <div class="prediction-container">
+                <!-- Formulaire de prédiction -->
+                <div class="prediction-form-container">
+                    <div class="prediction-form">
+                        <div class="form-section">
+                            <h3 class="form-section-title">
+                                <i class="fas fa-seedling"></i>
+                                Plantation
+                            </h3>
+                        
+                        <div class="form-group">
+                            <label for="age_verger">Depuis combien d'années j'ai planté</label>
+                            <input type="number" id="age_verger" placeholder="15" step="0.1" min="0">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="agroforest">J'ai des arbres avec le cacao</label>
+                            <select id="agroforest">
+                                <option value="Oui">Oui</option>
+                                <option value="Non" selected>Non</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="engrais">J'utilise des engrais chimiques</label>
+                            <select id="engrais">
+                                <option value="Oui" selected>Oui</option>
+                                <option value="Non">Non</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="fumier">J'utilise du fumier ou compost</label>
+                            <select id="fumier">
+                                <option value="Oui">Oui</option>
+                                <option value="Non" selected>Non</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="maladie">Mes plants sont malades</label>
+                            <select id="maladie">
+                                <option value="Non" selected>Non</option>
+                                <option value="oui">Oui</option>
+                                <option value="Un peu">Un peu</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="herbicide">J'utilise des produits contre les mauvaises herbes</label>
+                            <select id="herbicide">
+                                <option value="Oui">Oui</option>
+                                <option value="Non" selected>Non</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="insecticide">J'utilise des produits contre les insectes</label>
+                            <select id="insecticide">
+                                <option value="Oui" selected>Oui</option>
+                                <option value="Non">Non</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="fongicide">J'utilise des produits contre les champignons</label>
+                            <select id="fongicide">
+                                <option value="Oui">Oui</option>
+                                <option value="Non" selected>Non</option>
+                            </select>
+                        </div>
+                        
+                        </div>
+                        
+                        <div class="form-section">
+                            <h3 class="form-section-title">
+                                <i class="fas fa-coins"></i>
+                                Coûts & Prix
+                            </h3>
+                        
+                        <div class="form-group">
+                            <label for="cout_prod">Coût par hectare (FCFA)</label>
+                            <input type="number" id="cout_prod" placeholder="450000" min="0">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="prix_a">Prix de vente du cacao (Fcfa/Kg)</label>
+                            <input type="number" id="prix_a" placeholder="1000" min="0" value="1000">
+                        </div>
+                        
+                        </div>
+                        
+                        <div class="form-section">
+                            <h3 class="form-section-title">
+                                <i class="fas fa-globe"></i>
+                                Région & Climat
+                            </h3>
+                        
+                        <div class="form-group">
+                            <label for="region">Région</label>
+                            <select id="region">
+                                <option value="Indenie-Djuablin" selected>Indenie-Djuablin</option>
+                                <option value="Yamoussoukro">Yamoussoukro</option>
+                                <option value="La Me">La Me</option>
+                                <option value="San-Pedro">San-Pedro</option>
+                                <option value="Grand-Ponts">Grand-Ponts</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="pluviometrie">Combien il pleut</label>
+                            <select id="pluviometrie">
+                                <option value="Faible">Faible</option>
+                                <option value="Moyenne" selected>Moyenne</option>
+                                <option value="Élevée">Élevée</option>
+                            </select>
+                        </div>
+                        
+                        </div>
+                        
+                        <div class="form-section">
+                            <h3 class="form-section-title">
+                                <i class="fas fa-user"></i>
+                                Mes informations
+                            </h3>
+                        
+                        <div class="form-group">
+                            <label for="sexe">Je suis</label>
+                            <select id="sexe">
+                                <option value="Masculin" selected>Un homme</option>
+                                <option value="Feminin">Une femme</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="competences">Je sais lire et écrire</label>
+                            <select id="competences">
+                                <option value="oui, lire et écrire" selected>Oui, je sais</option>
+                                <option value="oui, lire seulement">Je sais seulement lire</option>
+                                <option value="non">Non, je ne sais pas</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-actions">
+                        <button class="btn btn-primary btn-full" onclick="predictProductivity()">
+                            <i class="fas fa-magic"></i>
+                            Calculer ma récolte
+                        </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Résultats de prédiction -->
+                <div class="prediction-result" id="prediction-result">
+                    <!-- Cartes d'estimation -->
+                    <div class="estimation-cards">
+                        <div class="estimation-card">
+                            <h4>Production</h4>
+                            <div class="estimation-value" id="production-estimated">--</div>
+                            <div class="estimation-unit">t/ha</div>
+                        </div>
+                        <div class="estimation-card">
+                            <h4>Revenu</h4>
+                            <div class="estimation-value" id="revenue-potential">--</div>
+                            <div class="estimation-unit">FCFA/ha</div>
+                        </div>
+                        <div class="estimation-card">
+                            <h4>Bénéfice</h4>
+                            <div class="estimation-value" id="benefit-estimated">--</div>
+                            <div class="estimation-unit">FCFA/ha</div>
+                        </div>
+                    </div>
+
+                    <!-- Comment j'ai calculé -->
+                    <div class="calculation-details">
+                        <div class="details-header">
+                            <i class="fas fa-lightbulb"></i>
+                            <h4>Comment j'ai calculé :</h4>
+                        </div>
+                        <div class="details-content" id="calculation-details">
+                            <!-- Les détails seront générés par JavaScript -->
+                        </div>
+                    </div>
+
+                    <!-- Étude détaillée et recommandations -->
+                    <div class="analysis-section">
+                        <div class="analysis-header">
+                            <i class="fas fa-chart-bar"></i>
+                            <h4>Étude & Recommandations</h4>
+                        </div>
+                        
+                        <div class="analysis-content">
+                            <div class="productivity-analysis">
+                                <h5>Productivité</h5>
+                                <p>Votre production estimée de <strong id="user-production">--</strong> t/ha est comparée à la moyenne régionale de <strong>0.850</strong> t/ha.</p>
+                            </div>
+                            
+                            <div class="recommendations">
+                                <h5>Recommandations</h5>
+                                <ul id="recommendations-list">
+                                    <!-- Les recommandations seront générées par JavaScript -->
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Graphique comparatif -->
+                    <div class="comparison-chart">
+                        <h4>Étude comparative</h4>
+                        <p>Comparaison avec la moyenne régionale (Indenie)</p>
+                        <canvas id="comparison-chart" width="400" height="200"></canvas>
+                    </div>
+
+                    <!-- Répartition financière -->
+                    <div class="financial-distribution">
+                        <h4>Répartition financière</h4>
+                        <div class="chart-container">
+                            <canvas id="financial-chart" width="300" height="300"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Comment faire mieux -->
+                    <div class="optimization-suggestions">
+                        <div class="suggestions-header">
+                            <i class="fas fa-lightbulb"></i>
+                            <h4>Comment faire mieux</h4>
+                        </div>
+                        <div class="suggestions-content">
+                            <div class="improvement-tracks">
+                                <h5>Comment améliorer :</h5>
+                                <ul id="optimization-list">
+                                    <!-- Les suggestions seront générées par JavaScript -->
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="js/script.js"></script>
+</body>
+</html>

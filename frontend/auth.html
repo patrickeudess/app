@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <title>Connexion / Inscription - Mon Cacao</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .auth-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #2E8B57 0%, #3CB371 50%, #28a745 100%);
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .auth-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(255,255,255,0.1) 1px, transparent 1px),
+                radial-gradient(circle at 80% 20%, rgba(255,255,255,0.1) 1px, transparent 1px),
+                radial-gradient(circle at 40% 80%, rgba(255,255,255,0.1) 1px, transparent 1px);
+            background-size: 50px 50px, 30px 30px, 40px 40px;
+            animation: sparkle 4s linear infinite;
+            pointer-events: none;
+        }
+
+        @keyframes sparkle {
+            0% { transform: translateY(0px); }
+            100% { transform: translateY(-50px); }
+        }
+
+        .auth-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 2.5rem;
+            max-width: 450px;
+            width: 100%;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            z-index: 2;
+            position: relative;
+            backdrop-filter: blur(10px);
+        }
+
+        .auth-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .auth-header .logo-container {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, #2E8B57, #3CB371);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        .auth-header .logo-plant {
+            font-size: 2rem;
+            color: #FFD700;
+        }
+
+        .auth-header .logo-coins {
+            font-size: 1.5rem;
+            color: #FFD700;
+            margin-left: -0.5rem;
+        }
+
+        .auth-header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #2c3e50;
+            margin: 0 0 0.5rem 0;
+        }
+
+        .auth-header p {
+            font-size: 1rem;
+            color: #6c757d;
+            margin: 0;
+        }
+
+        .user-type-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+        }
+
+        .user-type-badge.producer {
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+        }
+
+        .auth-tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            background: #f8f9fa;
+            padding: 0.5rem;
+            border-radius: 12px;
+        }
+
+        .auth-tab {
+            flex: 1;
+            padding: 0.75rem 1rem;
+            border: none;
+            background: transparent;
+            color: #6c757d;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .auth-tab.active {
+            background: linear-gradient(135deg, #2E8B57, #3CB371);
+            color: white;
+            box-shadow: 0 2px 8px rgba(46, 139, 87, 0.3);
+        }
+
+        .auth-form {
+            display: none;
+        }
+
+        .auth-form.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #2c3e50;
+            font-weight: 600;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .form-group label i {
+            color: #2E8B57;
+            font-size: 1rem;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 0.875rem;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #2E8B57;
+            box-shadow: 0 0 0 3px rgba(46, 139, 87, 0.1);
+        }
+
+        .form-group input::placeholder {
+            color: #adb5bd;
+        }
+
+        .form-group .input-hint {
+            font-size: 0.85rem;
+            color: #6c757d;
+            margin-top: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .form-group .input-hint i {
+            color: #ffc107;
+            font-size: 0.9rem;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 1rem 2rem;
+            background: linear-gradient(135deg, #2E8B57, #3CB371);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 16px rgba(46, 139, 87, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            margin-top: 1.5rem;
+        }
+
+        .submit-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(46, 139, 87, 0.4);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .back-link {
+            text-align: center;
+            margin-top: 1.5rem;
+        }
+
+        .back-link a {
+            color: #6c757d;
+            text-decoration: none;
+            font-size: 0.95rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: color 0.3s ease;
+        }
+
+        .back-link a:hover {
+            color: #2E8B57;
+        }
+
+        .error-message {
+            background: #fee;
+            color: #dc3545;
+            padding: 0.75rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+            display: none;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .error-message.show {
+            display: flex;
+        }
+
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            padding: 0.75rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+            display: none;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .success-message.show {
+            display: flex;
+        }
+
+        @media (max-width: 480px) {
+            .auth-card {
+                padding: 2rem 1.5rem;
+            }
+
+            .auth-header h1 {
+                font-size: 1.75rem;
+            }
+
+            .auth-tabs {
+                flex-direction: column;
+            }
+
+            .auth-tab {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="auth-container">
+        <div class="auth-card">
+            <div class="auth-header">
+                <div class="logo-container">
+                    <i class="fas fa-seedling logo-plant"></i>
+                    <i class="fas fa-coins logo-coins"></i>
+                </div>
+                <h1>Bienvenue</h1>
+                <p id="authSubtitle">Connectez-vous ou créez un compte</p>
+                <div class="user-type-badge" id="userTypeBadge">
+                    <i class="fas fa-user"></i>
+                    <span id="userTypeText">Utilisateur</span>
+                </div>
+            </div>
+
+            <div class="error-message" id="errorMessage">
+                <i class="fas fa-exclamation-circle"></i>
+                <span id="errorText"></span>
+            </div>
+
+            <div class="success-message" id="successMessage">
+                <i class="fas fa-check-circle"></i>
+                <span id="successText"></span>
+            </div>
+
+            <div class="auth-tabs">
+                <button class="auth-tab active" onclick="switchTab('login')">
+                    <i class="fas fa-sign-in-alt"></i> Connexion
+                </button>
+                <button class="auth-tab" onclick="switchTab('register')">
+                    <i class="fas fa-user-plus"></i> Inscription
+                </button>
+            </div>
+
+            <!-- Formulaire de Connexion -->
+            <form class="auth-form active" id="loginForm" onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label for="loginIdentifier">
+                        <i class="fas fa-phone"></i>
+                        <span id="loginLabel">Numéro de téléphone</span>
+                    </label>
+                    <input 
+                        type="text" 
+                        id="loginIdentifier" 
+                        name="identifier" 
+                        placeholder="Ex: +225 07 12 34 56 78" 
+                        required
+                        autocomplete="tel"
+                    >
+                    <div class="input-hint" id="loginHint">
+                        <i class="fas fa-info-circle"></i>
+                        <span>Entrez votre numéro de téléphone</span>
+                    </div>
+                </div>
+
+                <button type="submit" class="submit-btn">
+                    <i class="fas fa-sign-in-alt"></i>
+                    <span>Se connecter</span>
+                </button>
+            </form>
+
+            <!-- Formulaire d'Inscription -->
+            <form class="auth-form" id="registerForm" onsubmit="handleRegister(event)">
+                <div class="form-group" id="registerPhoneGroup">
+                    <label for="registerPhone">
+                        <i class="fas fa-phone"></i>
+                        Numéro de téléphone
+                    </label>
+                    <input 
+                        type="text" 
+                        id="registerPhone" 
+                        name="phone" 
+                        placeholder="Ex: +225 07 12 34 56 78" 
+                        required
+                        autocomplete="tel"
+                    >
+                    <div class="input-hint">
+                        <i class="fas fa-info-circle"></i>
+                        <span>Format: +225 XX XX XX XX XX</span>
+                    </div>
+                </div>
+
+                <div class="form-group" id="registerEmailGroup" style="display: none;">
+                    <label for="registerEmail">
+                        <i class="fas fa-envelope"></i>
+                        Email (optionnel)
+                    </label>
+                    <input 
+                        type="email" 
+                        id="registerEmail" 
+                        name="email" 
+                        placeholder="exemple@email.com" 
+                        autocomplete="email"
+                    >
+                    <div class="input-hint">
+                        <i class="fas fa-info-circle"></i>
+                        <span>Recommandé pour les professionnels</span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="registerName">
+                        <i class="fas fa-user"></i>
+                        Nom complet
+                    </label>
+                    <input 
+                        type="text" 
+                        id="registerName" 
+                        name="name" 
+                        placeholder="Votre nom complet" 
+                        required
+                        autocomplete="name"
+                    >
+                </div>
+
+                <button type="submit" class="submit-btn">
+                    <i class="fas fa-user-plus"></i>
+                    <span>Créer un compte</span>
+                </button>
+            </form>
+
+            <div class="back-link">
+                <a href="user-type-selection.html">
+                    <i class="fas fa-arrow-left"></i>
+                    <span>Retour</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentUserType = null;
+
+        // Récupérer le type d'utilisateur depuis localStorage
+        document.addEventListener('DOMContentLoaded', function() {
+            currentUserType = localStorage.getItem('selected_user_type_for_auth');
+            
+            if (!currentUserType) {
+                // Si pas de type sélectionné, rediriger vers la sélection
+                window.location.href = 'user-type-selection.html';
+                return;
+            }
+
+            // Adapter l'interface selon le type d'utilisateur
+            updateInterfaceForUserType(currentUserType);
+        });
+
+        function updateInterfaceForUserType(userType) {
+            const userTypeText = document.getElementById('userTypeText');
+            const userTypeBadge = document.getElementById('userTypeBadge');
+            const loginLabel = document.getElementById('loginLabel');
+            const loginHint = document.getElementById('loginHint');
+            const loginInput = document.getElementById('loginIdentifier');
+            const registerEmailGroup = document.getElementById('registerEmailGroup');
+
+            if (userType === 'producteur') {
+                userTypeText.textContent = 'Producteur';
+                userTypeBadge.className = 'user-type-badge producer';
+                loginLabel.textContent = 'Numéro de téléphone';
+                loginHint.querySelector('span').textContent = 'Entrez votre numéro de téléphone';
+                loginInput.placeholder = 'Ex: +225 07 12 34 56 78';
+                registerEmailGroup.style.display = 'none';
+            } else if (userType === 'professionnel') {
+                userTypeText.textContent = 'Professionnel';
+                userTypeBadge.className = 'user-type-badge';
+                loginLabel.textContent = 'Téléphone ou Email';
+                loginHint.querySelector('span').textContent = 'Entrez votre numéro de téléphone ou votre email';
+                loginInput.placeholder = 'Téléphone ou Email';
+                loginInput.type = 'text';
+                registerEmailGroup.style.display = 'block';
+            }
+        }
+
+        function switchTab(tab) {
+            // Mettre à jour les onglets
+            document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.auth-form').forEach(f => f.classList.remove('active'));
+
+            if (tab === 'login') {
+                document.querySelector('.auth-tab:first-child').classList.add('active');
+                document.getElementById('loginForm').classList.add('active');
+            } else {
+                document.querySelector('.auth-tab:last-child').classList.add('active');
+                document.getElementById('registerForm').classList.add('active');
+            }
+
+            // Masquer les messages
+            hideMessages();
+        }
+
+        function hideMessages() {
+            document.getElementById('errorMessage').classList.remove('show');
+            document.getElementById('successMessage').classList.remove('show');
+        }
+
+        function showError(message) {
+            const errorDiv = document.getElementById('errorMessage');
+            const errorText = document.getElementById('errorText');
+            errorText.textContent = message;
+            errorDiv.classList.add('show');
+            document.getElementById('successMessage').classList.remove('show');
+        }
+
+        function showSuccess(message) {
+            const successDiv = document.getElementById('successMessage');
+            const successText = document.getElementById('successText');
+            successText.textContent = message;
+            successDiv.classList.add('show');
+            document.getElementById('errorMessage').classList.remove('show');
+        }
+
+        function validatePhone(phone) {
+            // Validation simple du numéro de téléphone
+            const phoneRegex = /^[\+]?[0-9\s\-\(\)]{8,}$/;
+            return phoneRegex.test(phone.replace(/\s/g, ''));
+        }
+
+        function validateEmail(email) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailRegex.test(email);
+        }
+
+        function handleLogin(event) {
+            event.preventDefault();
+            hideMessages();
+
+            const identifier = document.getElementById('loginIdentifier').value.trim();
+            
+            if (!identifier) {
+                showError('Veuillez entrer votre identifiant');
+                return;
+            }
+
+            // Vérifier si c'est un email ou un téléphone
+            const isEmail = validateEmail(identifier);
+            const isPhone = validatePhone(identifier);
+
+            if (!isEmail && !isPhone) {
+                showError('Format invalide. Entrez un numéro de téléphone ou un email valide.');
+                return;
+            }
+
+            // Pour les producteurs, seul le téléphone est accepté
+            if (currentUserType === 'producteur' && isEmail) {
+                showError('Les producteurs doivent utiliser leur numéro de téléphone');
+                return;
+            }
+
+            // Récupérer les comptes depuis localStorage
+            const accounts = JSON.parse(localStorage.getItem('user_accounts') || '[]');
+            
+            // Chercher le compte
+            let account = null;
+            if (isEmail) {
+                account = accounts.find(acc => 
+                    acc.email && acc.email.toLowerCase() === identifier.toLowerCase() && 
+                    acc.userType === currentUserType
+                );
+            } else {
+                account = accounts.find(acc => 
+                    acc.phone === identifier && acc.userType === currentUserType
+                );
+            }
+
+            if (!account) {
+                showError('Compte non trouvé. Veuillez créer un compte d\'abord.');
+                return;
+            }
+
+            // Connexion réussie
+            localStorage.setItem('user_type', currentUserType);
+            localStorage.setItem('user_type_selected', 'true');
+            localStorage.setItem('user_authenticated', 'true');
+            localStorage.setItem('current_user_id', account.id);
+            localStorage.setItem('current_user_name', account.name);
+
+            showSuccess('Connexion réussie ! Redirection...');
+
+            setTimeout(() => {
+                if (currentUserType === 'producteur') {
+                    window.location.href = 'index.html';
+                } else {
+                    window.location.href = 'dashboard-professionnel.html';
+                }
+            }, 1000);
+        }
+
+        function handleRegister(event) {
+            event.preventDefault();
+            hideMessages();
+
+            const phone = document.getElementById('registerPhone').value.trim();
+            const email = document.getElementById('registerEmail').value.trim();
+            const name = document.getElementById('registerName').value.trim();
+
+            if (!phone) {
+                showError('Le numéro de téléphone est obligatoire');
+                return;
+            }
+
+            if (!validatePhone(phone)) {
+                showError('Format de numéro de téléphone invalide');
+                return;
+            }
+
+            if (email && !validateEmail(email)) {
+                showError('Format d\'email invalide');
+                return;
+            }
+
+            if (!name) {
+                showError('Le nom complet est obligatoire');
+                return;
+            }
+
+            // Récupérer les comptes existants
+            const accounts = JSON.parse(localStorage.getItem('user_accounts') || '[]');
+
+            // Vérifier si le téléphone existe déjà
+            const phoneExists = accounts.some(acc => acc.phone === phone && acc.userType === currentUserType);
+            if (phoneExists) {
+                showError('Ce numéro de téléphone est déjà utilisé');
+                return;
+            }
+
+            // Vérifier si l'email existe déjà (si fourni)
+            if (email) {
+                const emailExists = accounts.some(acc => 
+                    acc.email && acc.email.toLowerCase() === email.toLowerCase() && 
+                    acc.userType === currentUserType
+                );
+                if (emailExists) {
+                    showError('Cet email est déjà utilisé');
+                    return;
+                }
+            }
+
+            // Créer le nouveau compte
+            const newAccount = {
+                id: 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
+                phone: phone,
+                email: email || null,
+                name: name,
+                userType: currentUserType,
+                createdAt: new Date().toISOString()
+            };
+
+            accounts.push(newAccount);
+            localStorage.setItem('user_accounts', JSON.stringify(accounts));
+
+            // Connecter automatiquement
+            localStorage.setItem('user_type', currentUserType);
+            localStorage.setItem('user_type_selected', 'true');
+            localStorage.setItem('user_authenticated', 'true');
+            localStorage.setItem('current_user_id', newAccount.id);
+            localStorage.setItem('current_user_name', newAccount.name);
+
+            showSuccess('Compte créé avec succès ! Redirection...');
+
+            setTimeout(() => {
+                if (currentUserType === 'producteur') {
+                    window.location.href = 'index.html';
+                } else {
+                    window.location.href = 'dashboard-professionnel.html';
+                }
+            }, 1000);
+        }
+    </script>
+</body>
+</html>
+

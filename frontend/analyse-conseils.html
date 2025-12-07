@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#FFD700">
+    <title>Analyse des Conseils - Mon Cacao</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/modern-banner.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="js/auth.js"></script>
+    <style>
+        .analysis-page {
+            padding: 2rem 0;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .page-title {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .page-title h1 {
+            margin: 0;
+            font-size: 2rem;
+            color: #2c3e50;
+        }
+
+        .page-title i {
+            font-size: 2rem;
+            color: #FFD700;
+        }
+
+        .btn-analyze {
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            color: #2c3e50;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(255, 215, 0, 0.3);
+        }
+
+        .btn-analyze:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 215, 0, 0.4);
+        }
+
+        .btn-analyze:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .info-banner {
+            background: linear-gradient(135deg, #2E8B57 0%, #3CB371 100%);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 15px;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 16px rgba(46, 139, 87, 0.3);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-label {
+            opacity: 0.9;
+            font-size: 0.9rem;
+        }
+
+        .chart-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 15px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .chart-card h3 {
+            margin: 0 0 1rem 0;
+            color: #2c3e50;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .top-advice-item {
+            padding: 0.75rem;
+            background: #f8f9fa;
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+            border-left: 4px solid #667eea;
+        }
+
+        .top-advice-item.top-3 {
+            border-left-color: #2E8B57;
+        }
+
+        .source-card {
+            padding: 1rem;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .producer-card {
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .producer-card:hover {
+            border-color: #667eea;
+            box-shadow: 0 4px 16px rgba(102, 126, 234, 0.2);
+        }
+
+        .placeholder {
+            text-align: center;
+            padding: 3rem;
+            color: #6c757d;
+        }
+
+        .placeholder i {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            color: #FFD700;
+        }
+
+        @media (max-width: 768px) {
+            .page-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="app-header">
+        <div class="header-content">
+            <div class="header-left">
+                <div class="header-logo">
+                    <div class="logo-container">
+                        <i class="fas fa-seedling logo-plant"></i>
+                        <i class="fas fa-coins logo-coins"></i>
+                    </div>
+                    <div class="logo-text">
+                        <h1>Mon Cacao</h1>
+                    </div>
+                </div>
+                <div class="user-status">
+                    <div class="status-line">
+                        <i class="fas fa-circle status-dot"></i>
+                        <span>En ligne</span>
+                    </div>
+                    <div class="user-info">
+                        <i class="fas fa-building user-icon"></i>
+                        <span id="userTypeLabel">Professionnel</span>
+                    </div>
+                </div>
+            </div>
+            <div class="header-right">
+                <button class="btn-back" onclick="window.location.href='dashboard-professionnel.html'">
+                    <i class="fas fa-arrow-left"></i>
+                    <span>Retour</span>
+                </button>
+                <button class="btn-disconnect" onclick="changeUserType()">
+                    <i class="fas fa-exchange-alt"></i>
+                    <span>Changer de profil</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="main-content analysis-page">
+        <div class="content-container">
+            <div class="page-header">
+                <div class="page-title">
+                    <i class="fas fa-lightbulb"></i>
+                    <h1>Analyse des Conseils Donnés</h1>
+                </div>
+                <button class="btn-analyze" id="analyzeBtn" onclick="loadAnalysis()">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Analyser les conseils</span>
+                </button>
+            </div>
+
+            <div id="resultsContainer" style="display: none;">
+                <!-- Les résultats seront affichés ici -->
+            </div>
+
+            <div id="placeholder" class="placeholder">
+                <i class="fas fa-info-circle"></i>
+                <h3>Analyse des Conseils</h3>
+                <p>Cliquez sur "Analyser les conseils" pour voir quels conseils sont le plus souvent consultés par vos producteurs.</p>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            checkAuthentication('professionnel');
+            updateUserTypeDisplay();
+        });
+
+        function changeUserType() {
+            if (confirm('Voulez-vous changer de profil ? Vous serez déconnecté.')) {
+                localStorage.removeItem('user_type');
+                localStorage.removeItem('user_type_selected');
+                localStorage.removeItem('user_authenticated');
+                localStorage.removeItem('current_user_id');
+                localStorage.removeItem('current_user_name');
+                localStorage.removeItem('selected_user_type_for_auth');
+                window.location.href = 'user-type-selection.html';
+            }
+        }
+
+        function loadAnalysis() {
+            const btn = document.getElementById('analyzeBtn');
+            const resultsContainer = document.getElementById('resultsContainer');
+            const placeholder = document.getElementById('placeholder');
+            
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>Analyse en cours...</span>';
+            
+            const professionalProducers = JSON.parse(localStorage.getItem('professional_producers')) || [];
+            const adviceTracking = JSON.parse(localStorage.getItem('advice_tracking') || '{}');
+            
+            if (professionalProducers.length === 0) {
+                alert('Aucun producteur enregistré.');
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-chart-bar"></i> <span>Analyser les conseils</span>';
+                return;
+            }
+            
+            const adviceStats = {
+                byCategory: {},
+                byType: {},
+                bySource: {},
+                byProducer: {},
+                mostFrequent: []
+            };
+            
+            let totalAdvices = 0;
+            
+            professionalProducers.forEach(producer => {
+                const producerAdvices = adviceTracking[producer.id] || [];
+                totalAdvices += producerAdvices.length;
+                
+                if (producerAdvices.length > 0) {
+                    adviceStats.byProducer[producer.id] = {
+                        name: producer.name,
+                        count: producerAdvices.length,
+                        categories: {},
+                        types: {}
+                    };
+                }
+                
+                producerAdvices.forEach(advice => {
+                    const category = advice.category || 'Général';
+                    const type = advice.type || 'Autre';
+                    const source = advice.source || 'inconnu';
+                    
+                    adviceStats.byCategory[category] = (adviceStats.byCategory[category] || 0) + 1;
+                    adviceStats.byType[type] = (adviceStats.byType[type] || 0) + 1;
+                    adviceStats.bySource[source] = (adviceStats.bySource[source] || 0) + 1;
+                    
+                    if (adviceStats.byProducer[producer.id]) {
+                        adviceStats.byProducer[producer.id].categories[category] = 
+                            (adviceStats.byProducer[producer.id].categories[category] || 0) + 1;
+                        adviceStats.byProducer[producer.id].types[type] = 
+                            (adviceStats.byProducer[producer.id].types[type] || 0) + 1;
+                    }
+                });
+            });
+            
+            Object.entries(adviceStats.byType).forEach(([type, count]) => {
+                adviceStats.mostFrequent.push({ type, count });
+            });
+            adviceStats.mostFrequent.sort((a, b) => b.count - a.count);
+            
+            displayAnalysis(adviceStats, totalAdvices, professionalProducers.length);
+            
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-sync-alt"></i> <span>Actualiser</span>';
+        }
+
+        function displayAnalysis(stats, totalAdvices, totalProducers) {
+            const resultsContainer = document.getElementById('resultsContainer');
+            const placeholder = document.getElementById('placeholder');
+            
+            placeholder.style.display = 'none';
+            resultsContainer.style.display = 'block';
+            
+            if (totalAdvices === 0) {
+                resultsContainer.innerHTML = `
+                    <div style="text-align: center; padding: 3rem; color: #6c757d;">
+                        <i class="fas fa-info-circle" style="font-size: 3rem; margin-bottom: 1rem;"></i>
+                        <h3>Aucun conseil enregistré</h3>
+                        <p>Les conseils seront enregistrés automatiquement lorsque vos producteurs consulteront les pages de conseils, l'assistant IA, ou les prédictions.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            const sourceLabels = {
+                'prediction': 'Prédictions',
+                'conseils': 'Conseils Agroécologiques',
+                'assistant': 'Assistant IA',
+                'score-ecologique': 'Score Écologique'
+            };
+            
+            let html = `
+                <div class="info-banner">
+                    <h3 style="margin: 0 0 1rem 0; display: flex; align-items: center; gap: 0.75rem;">
+                        <i class="fas fa-chart-pie"></i>
+                        Vue d'Ensemble
+                    </h3>
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <div class="stat-value">${totalAdvices}</div>
+                            <div class="stat-label">Conseils donnés au total</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">${Object.keys(stats.byProducer).length}</div>
+                            <div class="stat-label">Producteurs ayant consulté</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">${Object.keys(stats.byCategory).length}</div>
+                            <div class="stat-label">Catégories différentes</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">${Object.keys(stats.byProducer).length > 0 ? Math.round(totalAdvices / Object.keys(stats.byProducer).length) : 0}</div>
+                            <div class="stat-label">Moyenne par producteur</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+                    <div class="chart-card">
+                        <h3>
+                            <i class="fas fa-trophy" style="color: #FFD700;"></i>
+                            Top 10 des Conseils
+                        </h3>
+                        <div style="max-height: 400px; overflow-y: auto;">
+            `;
+            
+            stats.mostFrequent.slice(0, 10).forEach((item, index) => {
+                const percentage = totalAdvices > 0 ? Math.round((item.count / totalAdvices) * 100) : 0;
+                html += `
+                    <div class="top-advice-item ${index < 3 ? 'top-3' : ''}">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.25rem;">
+                            <span style="font-weight: 600; color: #2c3e50;">
+                                ${index + 1}. ${item.type}
+                            </span>
+                            <span style="background: ${index < 3 ? '#2E8B57' : '#667eea'}; color: white; padding: 0.25rem 0.5rem; border-radius: 12px; font-size: 0.85rem; font-weight: 600;">
+                                ${item.count} fois
+                            </span>
+                        </div>
+                        <div style="background: #e9ecef; height: 8px; border-radius: 4px; overflow: hidden; margin-top: 0.5rem;">
+                            <div style="background: ${index < 3 ? '#2E8B57' : '#667eea'}; height: 100%; width: ${percentage}%;"></div>
+                        </div>
+                        <div style="font-size: 0.75rem; color: #6c757d; margin-top: 0.25rem;">${percentage}% du total</div>
+                    </div>
+                `;
+            });
+            
+            html += `
+                        </div>
+                    </div>
+                    
+                    <div class="chart-card">
+                        <h3>
+                            <i class="fas fa-tags" style="color: #667eea;"></i>
+                            Par Catégorie
+                        </h3>
+                        <canvas id="categoryChart" style="max-height: 300px;"></canvas>
+                    </div>
+                </div>
+                
+                <div class="chart-card" style="margin-bottom: 2rem;">
+                    <h3>
+                        <i class="fas fa-map" style="color: #ffc107;"></i>
+                        Par Source de Conseil
+                    </h3>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+            `;
+            
+            Object.entries(stats.bySource).sort((a, b) => b[1] - a[1]).forEach(([source, count]) => {
+                const percentage = totalAdvices > 0 ? Math.round((count / totalAdvices) * 100) : 0;
+                html += `
+                    <div class="source-card">
+                        <div style="font-size: 1.5rem; font-weight: 700; color: #2c3e50; margin-bottom: 0.5rem;">
+                            ${count}
+                        </div>
+                        <div style="font-size: 0.9rem; color: #6c757d; margin-bottom: 0.25rem;">
+                            ${sourceLabels[source] || source}
+                        </div>
+                        <div style="font-size: 0.75rem; color: #667eea; font-weight: 600;">
+                            ${percentage}%
+                        </div>
+                    </div>
+                `;
+            });
+            
+            html += `
+                    </div>
+                </div>
+                
+                <div class="chart-card">
+                    <h3>
+                        <i class="fas fa-users" style="color: #28a745;"></i>
+                        Conseils Consultés par Producteur
+                    </h3>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1rem;">
+            `;
+            
+            Object.values(stats.byProducer).sort((a, b) => b.count - a.count).forEach(producer => {
+                const topCategory = Object.entries(producer.categories).sort((a, b) => b[1] - a[1])[0];
+                const topType = Object.entries(producer.types).sort((a, b) => b[1] - a[1])[0];
+                
+                html += `
+                    <div class="producer-card">
+                        <h4 style="margin: 0 0 0.75rem 0; color: #2c3e50;">${producer.name}</h4>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; padding: 0.75rem; background: #f8f9fa; border-radius: 8px;">
+                            <span style="font-weight: 600; color: #2c3e50;">
+                                <i class="fas fa-lightbulb" style="color: #ffc107;"></i>
+                                Total:
+                            </span>
+                            <span style="font-size: 1.25rem; font-weight: 700; color: #667eea;">
+                                ${producer.count}
+                            </span>
+                        </div>
+                        ${topCategory ? `
+                        <div style="font-size: 0.85rem; color: #6c757d; margin-bottom: 0.5rem;">
+                            <i class="fas fa-tag" style="color: #2E8B57;"></i>
+                            Catégorie la plus consultée: <strong>${topCategory[0]}</strong> (${topCategory[1]} fois)
+                        </div>
+                        ` : ''}
+                        ${topType ? `
+                        <div style="font-size: 0.85rem; color: #6c757d;">
+                            <i class="fas fa-star" style="color: #FFD700;"></i>
+                            Type le plus consulté: <strong>${topType[0]}</strong> (${topType[1]} fois)
+                        </div>
+                        ` : ''}
+                    </div>
+                `;
+            });
+            
+            html += `
+                    </div>
+                </div>
+            `;
+            
+            resultsContainer.innerHTML = html;
+            
+            setTimeout(() => {
+                const ctx = document.getElementById('categoryChart');
+                if (ctx) {
+                    new Chart(ctx.getContext('2d'), {
+                        type: 'doughnut',
+                        data: {
+                            labels: Object.keys(stats.byCategory),
+                            datasets: [{
+                                data: Object.values(stats.byCategory),
+                                backgroundColor: [
+                                    '#2E8B57', '#3CB371', '#28a745', '#667eea', '#764ba2',
+                                    '#FFD700', '#FFA500', '#ffc107', '#dc3545', '#17a2b8'
+                                ]
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: true,
+                            plugins: {
+                                legend: {
+                                    position: 'bottom'
+                                }
+                            }
+                        }
+                    });
+                }
+            }, 100);
+        }
+    </script>
+</body>
+</html>
+

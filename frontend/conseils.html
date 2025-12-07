@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aide Agroécologiques - Mon Cacao</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/modern-banner.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="js/modern-banner.js"></script>
+    <script src="js/auth.js"></script>
+
+    <script>
+        // Vérifier l'authentification au chargement
+        document.addEventListener('DOMContentLoaded', function() {
+            if (checkAuthentication('producteur')) {
+                updateUserTypeDisplay();
+            }
+        });
+
+        function lireTexte(texte) {
+            if ('speechSynthesis' in window) {
+                const utterance = new SpeechSynthesisUtterance(texte);
+                utterance.lang = 'fr-FR';
+                utterance.rate = 0.8;
+                speechSynthesis.speak(utterance);
+            }
+        }
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            const labels = document.querySelectorAll('label');
+            labels.forEach(label => {
+                if (!label.querySelector('.btn-audio')) {
+                    const btnAudio = document.createElement('button');
+                    btnAudio.className = 'btn-audio';
+                    btnAudio.innerHTML = '<i class="fas fa-volume-up"></i>';
+                    btnAudio.title = 'Écouter';
+                    btnAudio.onclick = () => lireTexte(label.textContent);
+                    label.appendChild(btnAudio);
+                }
+            });
+            
+            // Enregistrer la consultation de la page conseils
+            trackConseilsPageView();
+        });
+        
+        function trackConseilsPageView() {
+            const currentProducerId = localStorage.getItem('current_producer_id');
+            if (!currentProducerId) return;
+            
+            const adviceLog = JSON.parse(localStorage.getItem('advice_tracking') || '{}');
+            if (!adviceLog[currentProducerId]) {
+                adviceLog[currentProducerId] = [];
+            }
+            
+            // Enregistrer les catégories de conseils consultées
+            const conseilsCategories = [
+                { text: 'Recyclage des Nutriments - Utilisez les déchets organiques pour enrichir naturellement votre sol', category: 'Agroécologie', type: 'Recyclage nutriments', source: 'conseils' },
+                { text: 'Lutte Biologique - Favorisez les prédateurs naturels pour contrôler les ravageurs', category: 'Protection', type: 'Lutte biologique', source: 'conseils' },
+                { text: 'Diversité Biologique - Maintenez une variété d\'espèces pour un écosystème équilibré', category: 'Agroécologie', type: 'Diversité biologique', source: 'conseils' },
+                { text: 'Gestion de l\'Eau - Optimisez l\'utilisation de l\'eau et prévenez l\'érosion', category: 'Gestion eau', type: 'Optimisation eau', source: 'conseils' },
+                { text: 'Engrais Naturelle - Compost de feuilles de cacao : 5 kg par arbre tous les 6 mois', category: 'Fertilisation', type: 'Engrais organique', source: 'conseils' },
+                { text: 'Protection Biologique - Pièges à phéromones : Attirent et capturent les insectes nuisibles', category: 'Protection', type: 'Pièges phéromones', source: 'conseils' },
+                { text: 'Agroforesterie - Bananiers : Fournissent de l\'ombre et des nutriments', category: 'Agroforesterie', type: 'Arbres d\'ombrage', source: 'conseils' }
+            ];
+            
+            const timestamp = new Date().toISOString();
+            conseilsCategories.forEach(conseil => {
+                adviceLog[currentProducerId].push({
+                    ...conseil,
+                    timestamp: timestamp
+            });
+        });
+            
+            localStorage.setItem('advice_tracking', JSON.stringify(adviceLog));
+        }
+    </script>
+</head>
+<body>
+    <!-- Header harmonisé -->
+    <header class="app-header">
+        <div class="header-content">
+            <div class="header-left">
+            <div class="header-logo">
+                    <div class="logo-container">
+                        <i class="fas fa-seedling logo-plant"></i>
+                        <i class="fas fa-coins logo-coins"></i>
+                    </div>
+                    <div class="logo-text">
+                        <h1>Mon Cacao</h1>
+                    </div>
+            </div>
+                <div class="user-status">
+                    <div class="status-line">
+                        <i class="fas fa-circle status-dot"></i>
+                    <span>En ligne</span>
+                </div>
+                    <div class="user-info">
+                        <i class="fas fa-user user-icon"></i>
+                        <span id="userTypeLabel">Producteur</span>
+                    </div>
+                </div>
+            </div>
+            <div class="header-right">
+                <button class="btn-change-profile" onclick="changeUserType()" title="Changer de profil">
+                    <i class="fas fa-exchange-alt"></i>
+                    <span>Changer de profil</span>
+                </button>
+                <a href="index.html" class="btn-back">
+                    <i class="fas fa-arrow-left"></i>
+                    <span>Retour</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Section Aide Agroécologiques -->
+    <main class="main-content">
+        <div class="content-container">
+            <div class="section-header">
+                <h1 class="section-title">
+                    <i class="fas fa-leaf"></i>
+                    Aide Agroécologiques
+                </h1>
+                <p class="section-subtitle">Pratiques respectueuses de l'environnement pour votre cacao</p>
+            </div>
+            
+            <div class="eco-tips-container">
+                <!-- Principes agroécologiques -->
+                <div class="eco-principles">
+                    <h3>🌱 Principes Agroécologiques</h3>
+                    <div class="principles-grid">
+                        <div class="principle-card">
+                            <div class="principle-icon">
+                                <i class="fas fa-recycle"></i>
+                            </div>
+                            <h4>Recyclage des Nutriments</h4>
+                            <p>Utilisez les déchets organiques pour enrichir naturellement votre sol</p>
+                        </div>
+                        
+                        <div class="principle-card">
+                            <div class="principle-icon">
+                                <i class="fas fa-bug"></i>
+                            </div>
+                            <h4>Lutte Biologique</h4>
+                            <p>Favorisez les prédateurs naturels pour contrôler les ravageurs</p>
+                        </div>
+                        
+                        <div class="principle-card">
+                            <div class="principle-icon">
+                                <i class="fas fa-tree"></i>
+                            </div>
+                            <h4>Diversité Biologique</h4>
+                            <p>Maintenez une variété d'espèces pour un écosystème équilibré</p>
+                        </div>
+                        
+                        <div class="principle-card">
+                            <div class="principle-icon">
+                                <i class="fas fa-tint"></i>
+                            </div>
+                            <h4>Gestion de l'Eau</h4>
+                            <p>Optimisez l'utilisation de l'eau et prévenez l'érosion</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Aide pratiques -->
+                <div class="practical-tips">
+                    <h3>🌿 Aide Pratiques</h3>
+                    
+                    <div class="tip-category">
+                        <h4><i class="fas fa-seedling"></i> Engrais Naturelle</h4>
+                        <div class="tip-list">
+                            <div class="tip-item eco">
+                                <i class="fas fa-check-circle"></i>
+                                <span>Compost de feuilles de cacao : 5 kg par arbre tous les 6 mois</span>
+                            </div>
+                            <div class="tip-item eco">
+                                <i class="fas fa-check-circle"></i>
+                                <span>Fumier de volaille fermenté : 2 kg par arbre</span>
+                            </div>
+                            <div class="tip-item eco">
+                                <i class="fas fa-check-circle"></i>
+                                <span>Engrais vert : Plantez des légumineuses entre les arbres</span>
+                            </div>
+                            <div class="tip-item eco">
+                                <i class="fas fa-check-circle"></i>
+                                <span>Bokashi : Compost japonais enrichi en micro-organismes</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="tip-category">
+                        <h4><i class="fas fa-bug"></i> Protection Biologique</h4>
+                        <div class="tip-list">
+                            <div class="tip-item eco">
+                                <i class="fas fa-check-circle"></i>
+                                <span>Pièges à phéromones : Attirent et capturent les insectes nuisibles</span>
+                            </div>
+                            <div class="tip-item eco">
+                                <i class="fas fa-check-circle"></i>
+                                <span>Néem : Pulvérisez de l'huile de neem contre les ravageurs</span>
+                            </div>
+                            <div class="tip-item eco">
+                                <i class="fas fa-check-circle"></i>
+                                <span>Coccinelles : Introduisez ces prédateurs naturels</span>
+                            </div>
+                            <div class="tip-item eco">
+                                <i class="fas fa-check-circle"></i>
+                                <span>Rotation des cultures : Évitez la monoculture</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="tip-category">
+                        <h4><i class="fas fa-tree"></i> J'ai des arbres avec le cacao</h4>
+                        <div class="tip-list">
+                            <div class="tip-item eco">
+                                <i class="fas fa-check-circle"></i>
+                                <span>Bananiers : Fournissent de l'ombre et des nutriments</span>
+                            </div>
+                            <div class="tip-item eco">
+                                <i class="fas fa-check-circle"></i>
+                                <span>Acacias : Fixent l'azote et améliorent le sol</span>
+                            </div>
+                            <div class="tip-item eco">
+                                <i class="fas fa-check-circle"></i>
+                                <span>Palmiers : Protègent du vent et enrichissent le sol</span>
+                            </div>
+                            <div class="tip-item eco">
+                                <i class="fas fa-check-circle"></i>
+                                <span>Arbres fruitiers : Diversifient les revenus</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="tip-category">
+                        <h4><i class="fas fa-tint"></i> Gestion de l'Eau</h4>
+                        <div class="tip-list">
+                            <div class="tip-item eco">
+                                <i class="fas fa-check-circle"></i>
+                                <span>Paillage organique : Retient l'humidité et nourrit le sol</span>
+                            </div>
+                            <div class="tip-item eco">
+                                <i class="fas fa-check-circle"></i>
+                                <span>Récupération d'eau de pluie : Installez des citernes</span>
+                            </div>
+                            <div class="tip-item eco">
+                                <i class="fas fa-check-circle"></i>
+                                <span>Irrigation goutte-à-goutte : Économise 60% d'eau</span>
+                            </div>
+                            <div class="tip-item eco">
+                                <i class="fas fa-check-circle"></i>
+                                <span>Bassins de rétention : Stockent l'eau en saison des pluies</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Impact environnemental -->
+                <div class="environmental-impact">
+                    <h3>🌍 Impact Environnemental</h3>
+                    <div class="impact-grid">
+                        <div class="impact-card positive">
+                            <i class="fas fa-tree"></i>
+                            <h4>Différents animaux et plantes</h4>
+                            <p>+60% d'espèces d'oiseaux et d'insectes bénéfiques</p>
+                        </div>
+                        
+                        <div class="impact-card positive">
+                            <i class="fas fa-tint"></i>
+                            <h4>Qualité de l'Eau</h4>
+                            <p>-80% de pollution des eaux souterraines</p>
+                        </div>
+                        
+                        <div class="impact-card positive">
+                            <i class="fas fa-cloud"></i>
+                            <h4>Air Pur</h4>
+                            <p>+45% de séquestration de CO2</p>
+                        </div>
+                        
+                        <div class="impact-card positive">
+                            <i class="fas fa-seedling"></i>
+                            <h4>Sol Fertile</h4>
+                            <p>+35% de matière organique dans le sol</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Plan d'action -->
+                <div class="action-plan">
+                    <h3>📋 Plan d'Action Personnel</h3>
+                    <div class="plan-content">
+                        <p>Basé sur vos données de production, voici votre plan agroécologique personnalisé :</p>
+                        <div class="plan-steps">
+                            <div class="plan-step">
+                                <div class="step-number">1</div>
+                                <div class="step-content">
+                                    <h4>Mois 1-2 : Préparation</h4>
+                                    <ul>
+                                        <li>Installer un système de compostage</li>
+                                        <li>Préparer des extraits de neem</li>
+                                        <li>Planifier l'agroforesterie</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <div class="plan-step">
+                                <div class="step-number">2</div>
+                                <div class="step-content">
+                                    <h4>Mois 3-4 : Mise en place</h4>
+                                    <ul>
+                                        <li>Planter des arbres d'ombrage</li>
+                                        <li>Appliquer le premier compost</li>
+                                        <li>Installer les pièges à phéromones</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            
+                            <div class="plan-step">
+                                <div class="step-number">3</div>
+                                <div class="step-content">
+                                    <h4>Mois 5-6 : Optimisation</h4>
+                                    <ul>
+                                        <li>Introduire les micro-organismes EM</li>
+                                        <li>Mettre en place l'irrigation goutte-à-goutte</li>
+                                        <li>Surveiller et ajuster les pratiques</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="js/script.js"></script>
+</body>
+</html>

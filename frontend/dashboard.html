@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌱 Mon Cacao - Accueil</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/modern-banner.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="css/home.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Header harmonisé -->
+    <header class="app-header">
+        <div class="header-content">
+            <div class="header-left">
+                <div class="header-logo">
+                    <div class="logo-container">
+                        <i class="fas fa-seedling logo-plant"></i>
+                        <i class="fas fa-coins logo-coins"></i>
+                    </div>
+                    <div class="logo-text">
+                        <h1>Mon Cacao</h1>
+                    </div>
+                </div>
+                <div class="user-status">
+                    <div class="status-line">
+                        <i class="fas fa-circle status-dot"></i>
+                    <span>En ligne</span>
+                </div>
+                <div class="user-info">
+                        <i class="fas fa-user user-icon"></i>
+                    <span>Agriculteur</span>
+                </div>
+                </div>
+            </div>
+            <div class="header-right">
+                <a href="index.html" class="btn-back">
+                    <i class="fas fa-arrow-left"></i>
+                    <span>Retour</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <!-- Page Title -->
+            <div class="page-title">
+                <i class="fas fa-home"></i>
+                <h1>Fonctionnalités</h1>
+                <button class="listen-btn" onclick="speakText('Fonctionnalités disponibles')">
+                    <i class="fas fa-volume-up"></i>
+                    Écouter
+                </button>
+            </div>
+
+            <!-- Features Grid 3x3 -->
+            <div class="features-grid">
+                <!-- 1. Prédiction de Productivité -->
+                <div class="feature-card prediction-card" onclick="navigateTo('prediction')">
+                    <div class="feature-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h3>Prédiction</h3>
+                    <p>Productivité + Revenus + Recommandations</p>
+                    <div class="feature-badge new">Nouveau</div>
+                    <button class="listen-btn-small" onclick="speakText('Prédiction de productivité avec bénéfices et recommandations personnalisées')">
+                        <i class="fas fa-volume-up"></i>
+                    </button>
+                </div>
+
+                <!-- 2. Soumettre des Données -->
+                <div class="feature-card data-card" onclick="navigateTo('submit-data')">
+                    <div class="feature-icon">
+                        <i class="fas fa-upload"></i>
+                    </div>
+                    <h3>Soumettre</h3>
+                    <p>Données de production régulières</p>
+                    <button class="listen-btn-small" onclick="speakText('Soumettre vos données de production pour améliorer le modèle')">
+                        <i class="fas fa-volume-up"></i>
+                    </button>
+                </div>
+
+                <!-- 3. Historique -->
+                <div class="feature-card history-card" onclick="navigateTo('history')">
+                    <div class="feature-icon">
+                        <i class="fas fa-history"></i>
+                    </div>
+                    <h3>Historique</h3>
+                    <p>Données saisies précédemment</p>
+                    <button class="listen-btn-small" onclick="speakText('Consulter l\'historique de vos données saisies')">
+                        <i class="fas fa-volume-up"></i>
+                    </button>
+                </div>
+
+                <!-- 4. Assistant IA -->
+                <div class="feature-card ai-card" onclick="navigateTo('ai-assistant')">
+                    <div class="feature-icon">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <h3>Assistant IA</h3>
+                    <p>Réponses à vos questions</p>
+                    <button class="listen-btn-small" onclick="speakText('Assistant IA pour répondre à vos questions sur la production de cacao')">
+                        <i class="fas fa-volume-up"></i>
+                    </button>
+                </div>
+
+                <!-- 5. Analyse -->
+                <div class="feature-card analysis-card" onclick="navigateTo('analysis')">
+                    <div class="feature-icon">
+                        <i class="fas fa-chart-bar"></i>
+                    </div>
+                    <h3>Analyse</h3>
+                    <p>Graphiques et tendances</p>
+                    <button class="listen-btn-small" onclick="speakText('Analyses détaillées et graphiques de votre production')">
+                        <i class="fas fa-volume-up"></i>
+                    </button>
+                </div>
+
+                <!-- 6. Revenus -->
+                <div class="feature-card revenue-card" onclick="navigateTo('revenue')">
+                    <div class="feature-icon">
+                        <i class="fas fa-coins"></i>
+                    </div>
+                    <h3>Revenus</h3>
+                    <p>Bénéfices et marges</p>
+                    <button class="listen-btn-small" onclick="speakText('Suivi de vos revenus et bénéfices')">
+                        <i class="fas fa-volume-up"></i>
+                    </button>
+                </div>
+
+                <!-- 7. Production -->
+                <div class="feature-card production-card" onclick="navigateTo('production')">
+                    <div class="feature-icon">
+                        <i class="fas fa-leaf"></i>
+                    </div>
+                    <h3>Production</h3>
+                    <p>Suivi de la plantation</p>
+                    <button class="listen-btn-small" onclick="speakText('Suivi de votre production de cacao')">
+                        <i class="fas fa-volume-up"></i>
+                    </button>
+                </div>
+
+                <!-- 8. Conseils -->
+                <div class="feature-card tips-card" onclick="navigateTo('tips')">
+                    <div class="feature-icon">
+                        <i class="fas fa-lightbulb"></i>
+                    </div>
+                    <h3>Conseils</h3>
+                    <p>Astuces d'amélioration</p>
+                    <button class="listen-btn-small" onclick="speakText('Conseils pour améliorer votre production')">
+                        <i class="fas fa-volume-up"></i>
+                    </button>
+                </div>
+
+
+            </div>
+
+            <!-- Quick Status -->
+            <div class="quick-status">
+                <h2>État Actuel</h2>
+                <div class="status-grid">
+                    <div class="status-item green">
+                        <i class="fas fa-seedling"></i>
+                        <span>Production OK</span>
+                    </div>
+                    <div class="status-item orange">
+                        <i class="fas fa-thermometer-half"></i>
+                        <span>Climat à surveiller</span>
+                    </div>
+                    <div class="status-item green">
+                        <i class="fas fa-coins"></i>
+                        <span>Revenus stables</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Navigation Bottom -->
+    <nav class="bottom-nav">
+        <div class="nav-item active" onclick="navigateTo('dashboard')">
+            <i class="fas fa-home"></i>
+            <span>Accueil</span>
+        </div>
+        <div class="nav-item" onclick="navigateTo('prediction')">
+            <i class="fas fa-chart-line"></i>
+            <span>Prédiction</span>
+        </div>
+        <div class="nav-item" onclick="navigateTo('production')">
+            <i class="fas fa-leaf"></i>
+            <span>Production</span>
+        </div>
+        <div class="nav-item" onclick="navigateTo('revenue')">
+            <i class="fas fa-coins"></i>
+            <span>Revenus</span>
+        </div>
+        
+    </nav>
+
+    <script src="js/dashboard.js"></script>
+    <script src="js/home.js"></script>
+</body>
+</html>

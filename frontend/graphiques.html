@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#17a2b8">
+    <title>Graphiques - Mon Cacao</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/modern-banner.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="js/auth.js"></script>
+    <style>
+        .charts-page {
+            padding: 2rem 0;
+        }
+
+        .page-header {
+            margin-bottom: 2rem;
+        }
+
+        .page-title {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .page-title h1 {
+            margin: 0;
+            font-size: 2rem;
+            color: #2c3e50;
+        }
+
+        .page-title i {
+            font-size: 2rem;
+            color: #17a2b8;
+        }
+
+        .charts-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .chart-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 15px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+        }
+
+        .chart-card h3 {
+            margin: 0 0 1.5rem 0;
+            color: #2c3e50;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .charts-section {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="app-header">
+        <div class="header-content">
+            <div class="header-left">
+                <div class="header-logo">
+                    <div class="logo-container">
+                        <i class="fas fa-seedling logo-plant"></i>
+                        <i class="fas fa-coins logo-coins"></i>
+                    </div>
+                    <div class="logo-text">
+                        <h1>Mon Cacao</h1>
+                    </div>
+                </div>
+                <div class="user-status">
+                    <div class="status-line">
+                        <i class="fas fa-circle status-dot"></i>
+                        <span>En ligne</span>
+                    </div>
+                    <div class="user-info">
+                        <i class="fas fa-building user-icon"></i>
+                        <span id="userTypeLabel">Professionnel</span>
+                    </div>
+                </div>
+            </div>
+            <div class="header-right">
+                <button class="btn-back" onclick="window.location.href='dashboard-professionnel.html'">
+                    <i class="fas fa-arrow-left"></i>
+                    <span>Retour</span>
+                </button>
+                <button class="btn-disconnect" onclick="changeUserType()">
+                    <i class="fas fa-exchange-alt"></i>
+                    <span>Changer de profil</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="main-content charts-page">
+        <div class="content-container">
+            <div class="page-header">
+                <div class="page-title">
+                    <i class="fas fa-chart-pie"></i>
+                    <h1>Graphiques et Visualisations</h1>
+                </div>
+            </div>
+
+            <div class="charts-section">
+                <div class="chart-card">
+                    <h3>
+                        <i class="fas fa-chart-line" style="color: #2E8B57;"></i>
+                        Évolution de la Production
+                    </h3>
+                    <canvas id="productionChart"></canvas>
+                </div>
+
+                <div class="chart-card">
+                    <h3>
+                        <i class="fas fa-map-marker-alt" style="color: #667eea;"></i>
+                        Répartition par Région
+                    </h3>
+                    <canvas id="regionChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            checkAuthentication('professionnel');
+            updateUserTypeDisplay();
+            initializeCharts();
+        });
+
+        function changeUserType() {
+            if (confirm('Voulez-vous changer de profil ? Vous serez déconnecté.')) {
+                localStorage.removeItem('user_type');
+                localStorage.removeItem('user_type_selected');
+                localStorage.removeItem('user_authenticated');
+                localStorage.removeItem('current_user_id');
+                localStorage.removeItem('current_user_name');
+                localStorage.removeItem('selected_user_type_for_auth');
+                window.location.href = 'user-type-selection.html';
+            }
+        }
+
+        function initializeCharts() {
+            const productionCanvas = document.getElementById('productionChart');
+            const regionCanvas = document.getElementById('regionChart');
+            
+            if (!productionCanvas || !regionCanvas) {
+                console.log('Les canvas de graphiques ne sont pas encore disponibles');
+                return;
+            }
+
+            if (window.productionChartInstance) {
+                window.productionChartInstance.destroy();
+            }
+            if (window.regionChartInstance) {
+                window.regionChartInstance.destroy();
+            }
+
+            const professionalProducers = JSON.parse(localStorage.getItem('professional_producers')) || [];
+            const allProducerData = JSON.parse(localStorage.getItem('all_producer_submissions')) || {};
+            
+            const monthlyData = {};
+            const regionData = {};
+
+            professionalProducers.forEach(producer => {
+                const submissions = allProducerData[producer.id] || [];
+                submissions.forEach(sub => {
+                    if (sub.date_soumission) {
+                        const date = new Date(sub.date_soumission);
+                        const month = date.toLocaleDateString('fr-FR', { month: 'short' });
+                        monthlyData[month] = (monthlyData[month] || 0) + (parseFloat(sub.production_reelle) || 0);
+                    }
+                    if (sub.region) {
+                        regionData[sub.region] = (regionData[sub.region] || 0) + 1;
+                    }
+                });
+            });
+
+            const productionCtx = productionCanvas.getContext('2d');
+            window.productionChartInstance = new Chart(productionCtx, {
+                type: 'line',
+                data: {
+                    labels: Object.keys(monthlyData).length > 0 ? Object.keys(monthlyData) : ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Jun'],
+                    datasets: [{
+                        label: 'Production (kg)',
+                        data: Object.keys(monthlyData).length > 0 ? Object.values(monthlyData) : [1200, 1900, 3000, 2500, 2200, 3000],
+                        borderColor: '#2E8B57',
+                        backgroundColor: 'rgba(46, 139, 87, 0.1)',
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true
+                }
+            });
+
+            const regionCtx = regionCanvas.getContext('2d');
+            const regionLabels = Object.keys(regionData).length > 0 ? Object.keys(regionData) : ['Abidjan', 'Yamoussoukro', 'Bouaké', 'Autres'];
+            const regionValues = Object.keys(regionData).length > 0 ? Object.values(regionData) : [35, 28, 22, 15];
+            
+            window.regionChartInstance = new Chart(regionCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: regionLabels,
+                    datasets: [{
+                        data: regionValues,
+                        backgroundColor: [
+                            '#667eea',
+                            '#764ba2',
+                            '#2E8B57',
+                            '#FFD700',
+                            '#ffc107',
+                            '#17a2b8'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true
+                }
+            });
+        }
+    </script>
+</body>
+</html>
+

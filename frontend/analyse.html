@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Étude - Mon Cacao</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/modern-banner.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="js/modern-banner.js"></script>
+    <style>
+        /* Styles spécifiques pour la page analyse améliorée */
+        .analytics-dashboard {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 20px;
+            padding: 2rem;
+            margin: 2rem 0;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .dashboard-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .dashboard-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .dashboard-subtitle {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .stat-card-modern {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card-modern::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+        }
+
+        .stat-card-modern:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+        }
+
+        .stat-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .stat-icon-modern {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        }
+
+        .stat-info h3 {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            margin: 0;
+        }
+
+        .stat-value-modern {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--primary-color);
+            margin: 0.5rem 0;
+        }
+
+        .stat-change-modern {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .stat-change-modern.positive {
+            color: var(--success-color);
+        }
+
+        .stat-change-modern.negative {
+            color: var(--danger-color);
+        }
+
+        .charts-section {
+            margin: 3rem 0;
+        }
+
+        .charts-grid-modern {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 2rem;
+        }
+
+        .chart-card-modern {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+
+        .chart-card-modern:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+        }
+
+        .chart-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .chart-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: white;
+            background: linear-gradient(135deg, var(--accent-color), #FFA500);
+        }
+
+        .chart-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin: 0;
+        }
+
+        .insights-section {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            margin: 3rem 0;
+        }
+
+        .insights-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .insights-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+            background: linear-gradient(135deg, #FF6B6B, #FF8E8E);
+        }
+
+        .insights-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin: 0;
+        }
+
+        .insights-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .insight-card {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 12px;
+            padding: 1.5rem;
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .insight-card h4 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+
+        .insight-card p {
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin: 0;
+        }
+
+        .filters-section {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            margin: 2rem 0;
+        }
+
+        .filters-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .filters-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin: 0;
+        }
+
+        .filters-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .filter-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .filter-item label {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .filter-item select {
+            padding: 0.8rem;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .filter-item select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(46, 139, 87, 0.1);
+        }
+
+        .export-section {
+            text-align: center;
+            margin: 3rem 0;
+        }
+
+        .export-btn {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .export-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .stat-card-modern,
+        .chart-card-modern,
+        .insight-card {
+            animation: fadeInUp 0.6s ease forwards;
+        }
+
+        .stat-card-modern:nth-child(1) { animation-delay: 0.1s; }
+        .stat-card-modern:nth-child(2) { animation-delay: 0.2s; }
+        .stat-card-modern:nth-child(3) { animation-delay: 0.3s; }
+        .stat-card-modern:nth-child(4) { animation-delay: 0.4s; }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .charts-grid-modern {
+                grid-template-columns: 1fr;
+            }
+            
+            .insights-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .filters-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+
+    <script src="js/auth.js"></script>
+    <script>
+        // Vérifier l'authentification au chargement
+        document.addEventListener('DOMContentLoaded', function() {
+            if (checkAuthentication('producteur')) {
+                updateUserTypeDisplay();
+            }
+        });
+
+        function lireTexte(texte) {
+            if ('speechSynthesis' in window) {
+                const utterance = new SpeechSynthesisUtterance(texte);
+                utterance.lang = 'fr-FR';
+                utterance.rate = 0.8;
+                speechSynthesis.speak(utterance);
+            }
+        }
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            const labels = document.querySelectorAll('label');
+            labels.forEach(label => {
+                if (!label.querySelector('.btn-audio')) {
+                    const btnAudio = document.createElement('button');
+                    btnAudio.className = 'btn-audio';
+                    btnAudio.innerHTML = '<i class="fas fa-volume-up"></i>';
+                    btnAudio.title = 'Écouter';
+                    btnAudio.onclick = () => lireTexte(label.textContent);
+                    label.appendChild(btnAudio);
+                }
+            });
+        });
+    </script>
+</head>
+<body>
+    <!-- Header harmonisé -->
+    <header class="app-header">
+        <div class="header-content">
+            <div class="header-left">
+            <div class="header-logo">
+                    <div class="logo-container">
+                        <i class="fas fa-seedling logo-plant"></i>
+                        <i class="fas fa-coins logo-coins"></i>
+                    </div>
+                    <div class="logo-text">
+                        <h1>Mon Cacao</h1>
+                    </div>
+            </div>
+                <div class="user-status">
+                    <div class="status-line">
+                        <i class="fas fa-circle status-dot"></i>
+                    <span>En ligne</span>
+                </div>
+                    <div class="user-info">
+                        <i class="fas fa-user user-icon"></i>
+                        <span id="userTypeLabel">Producteur</span>
+                    </div>
+                </div>
+            </div>
+            <div class="header-right">
+                <button class="btn-change-profile" onclick="changeUserType()" title="Changer de profil">
+                    <i class="fas fa-exchange-alt"></i>
+                    <span>Changer de profil</span>
+                </button>
+                <a href="index.html" class="btn-back">
+                    <i class="fas fa-arrow-left"></i>
+                    <span>Retour</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Section Étude Améliorée -->
+    <main class="main-content">
+        <div class="content-container">
+            <div class="analytics-dashboard">
+                <div class="dashboard-header">
+                    <h1 class="dashboard-title">
+                        <i class="fas fa-chart-line"></i>
+                        Tableau de Bord Analytique
+                    </h1>
+                    <p class="dashboard-subtitle">
+                        Étudez vos performances et optimisez votre production de cacao
+                    </p>
+                </div>
+
+                <!-- Filtres -->
+                <div class="filters-section">
+                    <div class="filters-header">
+                        <i class="fas fa-filter" style="color: var(--primary-color); font-size: 1.5rem;"></i>
+                        <h3 class="filters-title">Filtres d'Étude</h3>
+                    </div>
+                    <div class="filters-grid">
+                        <div class="filter-item">
+                            <label for="region-filter">Région</label>
+                            <select id="region-filter">
+                                <option value="">Toutes les régions</option>
+                                <option value="Indenie-Djuablin">Indenie-Djuablin</option>
+                                <option value="Yamoussoukro">Yamoussoukro</option>
+                                <option value="San-Pedro">San-Pedro</option>
+                            </select>
+                        </div>
+                        <div class="filter-item">
+                            <label for="period-filter">Période</label>
+                            <select id="period-filter">
+                                <option value="all">Toute la période</option>
+                                <option value="month">Ce mois</option>
+                                <option value="quarter">Ce trimestre</option>
+                                <option value="year">Cette année</option>
+                            </select>
+                        </div>
+                        <div class="filter-item">
+                            <label for="metric-filter">Métrique</label>
+                            <select id="metric-filter">
+                                <option value="productivity">Productivité</option>
+                                <option value="costs">Coûts</option>
+                                <option value="efficiency">Efficacité</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Cartes de statistiques améliorées -->
+                <div class="stats-grid">
+                    <div class="stat-card-modern">
+                        <div class="stat-header">
+                            <div class="stat-icon-modern">
+                                <i class="fas fa-database"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3>Données Soumises</h3>
+                                <div class="stat-value-modern">3</div>
+                                <div class="stat-change-modern positive">
+                                    <i class="fas fa-arrow-up"></i>
+                                    +2 ce mois
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card-modern">
+                        <div class="stat-header">
+                            <div class="stat-icon-modern">
+                                <i class="fas fa-seedling"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3>Productivité Moyenne</h3>
+                                <div class="stat-value-modern">0.7 t/ha</div>
+                                <div class="stat-change-modern positive">
+                                    <i class="fas fa-arrow-up"></i>
+                                    +0.4 vs début
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card-modern">
+                        <div class="stat-header">
+                            <div class="stat-icon-modern">
+                                <i class="fas fa-coins"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3>Coût Moyen</h3>
+                                <div class="stat-value-modern">276,667 FCFA</div>
+                                <div class="stat-change-modern negative">
+                                    <i class="fas fa-arrow-up"></i>
+                                    +15% vs mois dernier
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card-modern">
+                        <div class="stat-header">
+                            <div class="stat-icon-modern">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3>Tendance</h3>
+                                <div class="stat-value-modern">↗️</div>
+                                <div class="stat-change-modern positive">
+                                    <i class="fas fa-arrow-up"></i>
+                                    Amélioration
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Graphiques améliorés -->
+                <div class="charts-section">
+                    <div class="charts-grid-modern">
+                        <div class="chart-card-modern">
+                            <div class="chart-header">
+                                <div class="chart-icon">
+                                    <i class="fas fa-chart-line"></i>
+                                </div>
+                                <h3 class="chart-title">Évolution de la Productivité</h3>
+                            </div>
+                            <canvas id="productivity-chart" width="400" height="200"></canvas>
+                        </div>
+                        
+                        <div class="chart-card-modern">
+                            <div class="chart-header">
+                                <div class="chart-icon">
+                                    <i class="fas fa-map-marked-alt"></i>
+                                </div>
+                                <h3 class="chart-title">Répartition par Région</h3>
+                            </div>
+                            <canvas id="region-chart" width="400" height="200"></canvas>
+                        </div>
+                        
+                        <div class="chart-card-modern">
+                            <div class="chart-header">
+                                <div class="chart-icon">
+                                    <i class="fas fa-tools"></i>
+                                </div>
+                                <h3 class="chart-title">Utilisation des Intrants</h3>
+                            </div>
+                            <canvas id="inputs-chart" width="400" height="200"></canvas>
+                        </div>
+                        
+                        <div class="chart-card-modern">
+                            <div class="chart-header">
+                                <div class="chart-icon">
+                                    <i class="fas fa-money-bill-wave"></i>
+                                </div>
+                                <h3 class="chart-title">Coûts de Production</h3>
+                            </div>
+                            <canvas id="costs-chart" width="400" height="200"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Insights et recommandations -->
+                <div class="insights-section">
+                    <div class="insights-header">
+                        <div class="insights-icon">
+                            <i class="fas fa-lightbulb"></i>
+                        </div>
+                        <h3 class="insights-title">Insights et Recommandations</h3>
+                    </div>
+                    <div class="insights-grid">
+                        <div class="insight-card">
+                            <h4>🎯 Optimisation de la Productivité</h4>
+                            <p>Votre productivité a augmenté de 57% ce mois. Continuez à utiliser les engrais et l'agroforesterie pour maintenir cette tendance positive.</p>
+                        </div>
+                        <div class="insight-card">
+                            <h4>💰 Gestion des Coûts</h4>
+                            <p>Les coûts ont augmenté de 15%. Considérez l'utilisation de fumier organique pour réduire les dépenses en engrais chimiques.</p>
+                        </div>
+                        <div class="insight-card">
+                            <h4>🌱 Pratiques Durables</h4>
+                            <p>L'agroforesterie est utilisée dans 67% des cas. Augmentez cette pratique pour améliorer la durabilité de votre plantation.</p>
+                        </div>
+                        <div class="insight-card">
+                            <h4>📊 Comparaison Régionale</h4>
+                            <p>Votre performance est dans la moyenne régionale. Concentrez-vous sur l'optimisation des intrants pour dépasser la moyenne.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Export -->
+                <div class="export-section">
+                    <button class="export-btn" onclick="exportData()">
+                        <i class="fas fa-download"></i>
+                        Exporter les Études
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Fonction d'export
+        function exportData() {
+            alert('Fonctionnalité d\'export en cours de développement...');
+        }
+
+        // Initialisation des graphiques avec des couleurs améliorées
+        document.addEventListener('DOMContentLoaded', function() {
+            // Graphique de productivité amélioré
+            const productivityCtx = document.getElementById('productivity-chart').getContext('2d');
+            new Chart(productivityCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin'],
+                    datasets: [{
+                        label: 'Productivité (t/ha)',
+                        data: [0.3, 0.4, 0.5, 0.6, 0.7, 0.7],
+                        borderColor: '#2E8B57',
+                        backgroundColor: 'rgba(46, 139, 87, 0.1)',
+                        borderWidth: 3,
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 1.5
+                        }
+                    }
+                }
+            });
+            
+            // Graphique de répartition par région amélioré
+            const regionCtx = document.getElementById('region-chart').getContext('2d');
+            new Chart(regionCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Indenie-Djuablin', 'Yamoussoukro', 'San-Pedro'],
+                    datasets: [{
+                        data: [1, 1, 1],
+                        backgroundColor: ['#2E8B57', '#4169E1', '#FF8C00'],
+                        borderWidth: 2,
+                        borderColor: '#fff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                        }
+                    }
+                }
+            });
+            
+            // Graphique d'utilisation des intrants amélioré
+            const inputsCtx = document.getElementById('inputs-chart').getContext('2d');
+            new Chart(inputsCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Engrais', 'J'ai des arbres avec le cacao', 'Fumier', 'Herbicide', 'Insecticide', 'Fongicide'],
+                    datasets: [{
+                        label: 'Utilisation (%)',
+                        data: [67, 67, 67, 67, 67, 67],
+                        backgroundColor: [
+                            '#2E8B57',
+                            '#4169E1',
+                            '#FF8C00',
+                            '#FF6B6B',
+                            '#9370DB',
+                            '#20B2AA'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100
+                        }
+                    }
+                }
+            });
+            
+            // Graphique des coûts amélioré
+            const costsCtx = document.getElementById('costs-chart').getContext('2d');
+            new Chart(costsCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Soumission 1', 'Soumission 2', 'Soumission 3'],
+                    datasets: [{
+                        label: 'Coûts (FCFA)',
+                        data: [0, 450000, 380000],
+                        backgroundColor: [
+                            '#2E8B57',
+                            '#FF6B6B',
+                            '#4169E1'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>

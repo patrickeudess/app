@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#2E8B57">
+    <title>Estimation de Production - Mon Cacao</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/modern-banner.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="js/auth.js"></script>
+    <style>
+        .estimation-page {
+            padding: 2rem 0;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .page-title {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .page-title h1 {
+            margin: 0;
+            font-size: 2rem;
+            color: #2c3e50;
+        }
+
+        .page-title i {
+            font-size: 2rem;
+            color: #2E8B57;
+        }
+
+        .btn-calculate {
+            background: linear-gradient(135deg, #2E8B57, #3CB371);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(46, 139, 87, 0.3);
+        }
+
+        .btn-calculate:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(46, 139, 87, 0.4);
+        }
+
+        .btn-calculate:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .info-banner {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 15px;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 16px rgba(102, 126, 234, 0.3);
+        }
+
+        .info-banner h3 {
+            margin: 0 0 1rem 0;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-label {
+            opacity: 0.9;
+            font-size: 0.9rem;
+        }
+
+        .estimates-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .estimate-card {
+            background: white;
+            border: 2px solid #e9ecef;
+            border-radius: 15px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .estimate-card.has-data {
+            border-color: #2E8B57;
+        }
+
+        .estimate-card:hover {
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            transform: translateY(-3px);
+        }
+
+        .estimate-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 1rem;
+        }
+
+        .estimate-header h3 {
+            margin: 0;
+            color: #2c3e50;
+        }
+
+        .estimate-badge {
+            background: #2E8B57;
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .estimate-details {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .detail-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .detail-label {
+            font-weight: 600;
+            color: #2c3e50;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .detail-value {
+            font-weight: 600;
+        }
+
+        .placeholder {
+            text-align: center;
+            padding: 3rem;
+            color: #6c757d;
+        }
+
+        .placeholder i {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            color: #667eea;
+        }
+
+        @media (max-width: 768px) {
+            .estimates-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .page-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header harmonisé -->
+    <header class="app-header">
+        <div class="header-content">
+            <div class="header-left">
+                <div class="header-logo">
+                    <div class="logo-container">
+                        <i class="fas fa-seedling logo-plant"></i>
+                        <i class="fas fa-coins logo-coins"></i>
+                    </div>
+                    <div class="logo-text">
+                        <h1>Mon Cacao</h1>
+                    </div>
+                </div>
+                <div class="user-status">
+                    <div class="status-line">
+                        <i class="fas fa-circle status-dot"></i>
+                        <span>En ligne</span>
+                    </div>
+                    <div class="user-info">
+                        <i class="fas fa-building user-icon"></i>
+                        <span id="userTypeLabel">Professionnel</span>
+                    </div>
+                </div>
+            </div>
+            <div class="header-right">
+                <button class="btn-back" onclick="window.location.href='dashboard-professionnel.html'">
+                    <i class="fas fa-arrow-left"></i>
+                    <span>Retour</span>
+                </button>
+                <button class="btn-disconnect" onclick="changeUserType()">
+                    <i class="fas fa-exchange-alt"></i>
+                    <span>Changer de profil</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="main-content estimation-page">
+        <div class="content-container">
+            <div class="page-header">
+                <div class="page-title">
+                    <i class="fas fa-calculator"></i>
+                    <h1>Estimation de Production</h1>
+                </div>
+                <button class="btn-calculate" id="calculateBtn" onclick="calculateEstimates()">
+                    <i class="fas fa-calculator"></i>
+                    <span>Calculer les estimations</span>
+                </button>
+            </div>
+
+            <div id="resultsContainer" style="display: none;">
+                <!-- Les résultats seront affichés ici -->
+            </div>
+
+            <div id="placeholder" class="placeholder">
+                <i class="fas fa-info-circle"></i>
+                <h3>Estimation de Production</h3>
+                <p>Cliquez sur "Calculer les estimations" pour obtenir des prévisions de production basées sur les données de vos producteurs.</p>
+                <p style="margin-top: 1rem; font-size: 0.9rem;">
+                    <i class="fas fa-brain" style="color: #667eea;"></i>
+                    Les estimations utilisent l'intelligence artificielle (XGBoost) et les données historiques pour une précision optimale.
+                </p>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Vérifier l'authentification
+        document.addEventListener('DOMContentLoaded', function() {
+            checkAuthentication('professionnel');
+            updateUserTypeDisplay();
+        });
+
+        function changeUserType() {
+            if (confirm('Voulez-vous changer de profil ? Vous serez déconnecté.')) {
+                localStorage.removeItem('user_type');
+                localStorage.removeItem('user_type_selected');
+                localStorage.removeItem('user_authenticated');
+                localStorage.removeItem('current_user_id');
+                localStorage.removeItem('current_user_name');
+                localStorage.removeItem('selected_user_type_for_auth');
+                window.location.href = 'user-type-selection.html';
+            }
+        }
+
+        async function calculateEstimates() {
+            const btn = document.getElementById('calculateBtn');
+            const resultsContainer = document.getElementById('resultsContainer');
+            const placeholder = document.getElementById('placeholder');
+            
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>Calcul en cours...</span>';
+            
+            const professionalProducers = JSON.parse(localStorage.getItem('professional_producers')) || [];
+            const allProducerData = JSON.parse(localStorage.getItem('all_producer_submissions')) || {};
+            
+            if (professionalProducers.length === 0) {
+                alert('Aucun producteur enregistré. Veuillez d\'abord ajouter des producteurs.');
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-calculator"></i> <span>Calculer les estimations</span>';
+                return;
+            }
+            
+            const estimates = [];
+            let totalEstimatedProduction = 0;
+            let producersWithData = 0;
+            
+            for (const producer of professionalProducers) {
+                const submissions = allProducerData[producer.id] || [];
+                
+                if (submissions.length === 0) {
+                    estimates.push({
+                        producer: producer,
+                        estimatedProduction: null,
+                        method: 'Aucune donnée disponible',
+                        confidence: 0,
+                        details: 'Aucune soumission de données pour ce producteur',
+                        trend: null,
+                        historicalAvg: null
+                    });
+                    continue;
+                }
+                
+                producersWithData++;
+                const latestSubmission = submissions[submissions.length - 1];
+                
+                let historicalEstimate = 0;
+                let historicalCount = 0;
+                
+                submissions.forEach(sub => {
+                    if (sub.production_reelle) {
+                        historicalEstimate += parseFloat(sub.production_reelle) || 0;
+                        historicalCount++;
+                    }
+                });
+                
+                const avgHistoricalProduction = historicalCount > 0 ? historicalEstimate / historicalCount : 0;
+                
+                let mlEstimate = null;
+                let mlConfidence = 0;
+                
+                try {
+                    const predictionData = {
+                        age_verger: parseFloat(latestSubmission.age_verger) || 15,
+                        agroforest: latestSubmission.agroforest || 'Non',
+                        engrais: latestSubmission.engrais || 'Oui',
+                        fumier: latestSubmission.fumier || 'Non',
+                        maladie: latestSubmission.maladie || 'Non',
+                        herbicide: latestSubmission.herbicide || 'Non',
+                        insecticide: latestSubmission.insecticide || 'Non',
+                        fongicide: latestSubmission.fongicide || 'Non',
+                        cout_prod: parseFloat(latestSubmission.cout_prod) || 450000,
+                        prix_a: (parseFloat(latestSubmission.prix_a) || 1000) * 1000,
+                        region: latestSubmission.region || 'Indenie-Djuablin',
+                        pluviometrie: latestSubmission.pluviometrie || 'Normale',
+                        sexe: latestSubmission.sexe || 'M',
+                        competences: latestSubmission.competences || 'Moyennes'
+                    };
+                    
+                    const response = await fetch('http://localhost:5000/predict', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(predictionData)
+                    });
+                    
+                    if (response.ok) {
+                        const result = await response.json();
+                        if (result.success && result.prediction) {
+                            mlEstimate = result.prediction.productivity_t_ha * 1000;
+                            mlConfidence = result.prediction.confidence || 85;
+                        }
+                    }
+                } catch (error) {
+                    console.log('API non disponible, utilisation de l\'estimation historique');
+                }
+                
+                const finalEstimate = mlEstimate || avgHistoricalProduction;
+                const confidence = mlEstimate ? mlConfidence : (historicalCount > 1 ? 75 : 60);
+                
+                let trendFactor = 1.0;
+                if (submissions.length >= 2) {
+                    const recent = parseFloat(submissions[submissions.length - 1].production_reelle) || 0;
+                    const previous = parseFloat(submissions[submissions.length - 2].production_reelle) || 0;
+                    if (previous > 0) {
+                        trendFactor = 1 + ((recent - previous) / previous) * 0.3;
+                    }
+                }
+                
+                const adjustedEstimate = finalEstimate * trendFactor;
+                totalEstimatedProduction += adjustedEstimate;
+                
+                estimates.push({
+                    producer: producer,
+                    estimatedProduction: Math.round(adjustedEstimate),
+                    method: mlEstimate ? 'Modèle XGBoost' : 'Moyenne historique',
+                    confidence: Math.round(confidence),
+                    details: `Basé sur ${submissions.length} soumission${submissions.length > 1 ? 's' : ''}${mlEstimate ? ' (IA)' : ' (historique)'}`,
+                    historicalAvg: Math.round(avgHistoricalProduction),
+                    trend: trendFactor > 1.05 ? '↗️ Croissance' : trendFactor < 0.95 ? '↘️ Baisse' : '➡️ Stable'
+                });
+            }
+            
+            displayResults(estimates, totalEstimatedProduction, producersWithData);
+            
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-sync-alt"></i> <span>Recalculer</span>';
+        }
+
+        function displayResults(estimates, totalEstimated, producersWithData) {
+            const resultsContainer = document.getElementById('resultsContainer');
+            const placeholder = document.getElementById('placeholder');
+            
+            placeholder.style.display = 'none';
+            resultsContainer.style.display = 'block';
+            
+            let html = `
+                <div class="info-banner">
+                    <h3>
+                        <i class="fas fa-chart-line"></i>
+                        Estimation Globale
+                    </h3>
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <div class="stat-value">${totalEstimated.toLocaleString()} kg</div>
+                            <div class="stat-label">Production estimée totale</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">${producersWithData}</div>
+                            <div class="stat-label">Producteurs avec données</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">${producersWithData > 0 ? Math.round(totalEstimated / producersWithData) : 0} kg</div>
+                            <div class="stat-label">Moyenne par producteur</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="estimates-grid">
+            `;
+            
+            estimates.forEach(estimate => {
+                const hasEstimate = estimate.estimatedProduction !== null;
+                
+                html += `
+                    <div class="estimate-card ${hasEstimate ? 'has-data' : ''}">
+                        <div class="estimate-header">
+                            <h3>${estimate.producer.name}</h3>
+                            ${hasEstimate ? `<span class="estimate-badge">${estimate.estimatedProduction.toLocaleString()} kg</span>` : '<span style="color: #6c757d; font-size: 0.85rem;">Pas de données</span>'}
+                        </div>
+                        
+                        ${hasEstimate ? `
+                            <div class="estimate-details">
+                                <div class="detail-item">
+                                    <span class="detail-label">
+                                        <i class="fas fa-brain" style="color: #667eea;"></i>
+                                        Méthode:
+                                    </span>
+                                    <span class="detail-value" style="color: #667eea;">${estimate.method}</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">
+                                        <i class="fas fa-check-circle" style="color: #28a745;"></i>
+                                        Confiance:
+                                    </span>
+                                    <span class="detail-value" style="color: #28a745;">${estimate.confidence}%</span>
+                                </div>
+                                <div class="detail-item">
+                                    <span class="detail-label">
+                                        <i class="fas fa-chart-line" style="color: #ffc107;"></i>
+                                        Tendance:
+                                    </span>
+                                    <span class="detail-value" style="color: #ffc107;">${estimate.trend}</span>
+                                </div>
+                                ${estimate.historicalAvg ? `
+                                <div class="detail-item">
+                                    <span class="detail-label">
+                                        <i class="fas fa-history" style="color: #6c757d;"></i>
+                                        Moyenne historique:
+                                    </span>
+                                    <span class="detail-value" style="color: #6c757d;">${estimate.historicalAvg.toLocaleString()} kg</span>
+                                </div>
+                                ` : ''}
+                            </div>
+                            <div style="font-size: 0.85rem; color: #6c757d; padding-top: 0.75rem; border-top: 1px solid #e9ecef; margin-top: 1rem;">
+                                <i class="fas fa-info-circle"></i>
+                                ${estimate.details}
+                            </div>
+                            <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #e9ecef;">
+                                <a href="producteur-details.html?id=${estimate.producer.id}" style="color: #667eea; text-decoration: none; font-size: 0.9rem; display: flex; align-items: center; gap: 0.5rem;">
+                                    <i class="fas fa-eye"></i>
+                                    Voir les détails
+                                </a>
+                            </div>
+                        ` : `
+                            <div style="text-align: center; padding: 1.5rem; color: #6c757d;">
+                                <i class="fas fa-exclamation-triangle" style="font-size: 2rem; margin-bottom: 0.5rem;"></i>
+                                <p style="margin: 0;">${estimate.details}</p>
+                                <p style="margin: 0.5rem 0 0 0; font-size: 0.9rem;">Demandez au producteur de soumettre ses données pour obtenir une estimation.</p>
+                            </div>
+                        `}
+                    </div>
+                `;
+            });
+            
+            html += '</div>';
+            resultsContainer.innerHTML = html;
+        }
+    </script>
+</body>
+</html>
+

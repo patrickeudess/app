@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#667eea">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>🌱 Mon Cacao - IA Prédictive</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* Styles pour le modal de code producteur */
+        .producer-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 10000;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 15px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            animation: slideUp 0.3s ease;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            color: #2c3e50;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #6c757d;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .modal-close:hover {
+            background: #f8f9fa;
+            color: #dc3545;
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+        }
+
+        .modal-body .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-body label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #2c3e50;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .modal-body input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+            box-sizing: border-box;
+        }
+
+        .modal-body input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+            padding: 1.5rem;
+            border-top: 2px solid #e9ecef;
+        }
+
+        .btn-cancel,
+        .btn-submit {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-cancel {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-cancel:hover {
+            background: #5a6268;
+        }
+
+        .btn-submit {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+    </style>
+
+    <script>
+        // Vérifier l'authentification et le type d'utilisateur au chargement
+        document.addEventListener('DOMContentLoaded', function() {
+            const userAuthenticated = localStorage.getItem('user_authenticated');
+            const userType = localStorage.getItem('user_type');
+            const userTypeSelected = localStorage.getItem('user_type_selected');
+            
+            // Vérifier l'authentification
+            if (!userAuthenticated || userAuthenticated !== 'true') {
+                // Si pas authentifié, rediriger vers la sélection du type
+                window.location.href = 'user-type-selection.html';
+                return;
+            }
+            
+            // Si aucun type n'est sélectionné ou si ce n'est pas un producteur, rediriger
+            if (!userTypeSelected || userType !== 'producteur') {
+                // Si c'est un professionnel, rediriger vers son interface
+                if (userType === 'professionnel') {
+                    window.location.href = 'dashboard-professionnel.html';
+                    return;
+                }
+                // Sinon, rediriger vers la page de sélection
+                window.location.href = 'user-type-selection.html';
+                return;
+            }
+            
+            // Mettre à jour le header avec le type d'utilisateur
+            if (userType === 'producteur') {
+                const userInfoSpan = document.querySelector('.user-info span');
+                if (userInfoSpan) {
+                    userInfoSpan.textContent = 'Producteur';
+                }
+            }
+
+            // Vérifier si un code producteur est déjà enregistré
+            const currentProducerCode = localStorage.getItem('current_producer_code');
+            if (currentProducerCode) {
+                // Trouver le producteur correspondant
+                const professionalProducers = JSON.parse(localStorage.getItem('professional_producers')) || [];
+                const producer = professionalProducers.find(p => p.code === currentProducerCode);
+                if (producer) {
+                    localStorage.setItem('current_producer_id', producer.id);
+                    showProducerCodeStatus(producer);
+                }
+            } else {
+                // Afficher le bouton pour entrer le code
+                showProducerCodeInput();
+            }
+        });
+
+        function showProducerCodeInput() {
+            // Créer un bouton flottant pour entrer le code
+            const codeButton = document.createElement('div');
+            codeButton.id = 'producerCodeButton';
+            codeButton.style.cssText = `
+                position: fixed;
+                bottom: 20px;
+                right: 20px;
+                background: linear-gradient(135deg, #667eea, #764ba2);
+                color: white;
+                padding: 1rem 1.5rem;
+                border-radius: 50px;
+                box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+                cursor: pointer;
+                z-index: 1000;
+                display: flex;
+                align-items: center;
+                gap: 0.75rem;
+                font-weight: 600;
+                transition: all 0.3s ease;
+            `;
+            codeButton.innerHTML = `
+                <i class="fas fa-key"></i>
+                <span>Entrer mon code producteur</span>
+            `;
+            codeButton.onclick = openProducerCodeModal;
+            document.body.appendChild(codeButton);
+        }
+
+        function showProducerCodeStatus(producer) {
+            // Afficher une notification indiquant que le code est actif
+            const statusBadge = document.createElement('div');
+            statusBadge.id = 'producerCodeStatus';
+            statusBadge.style.cssText = `
+                position: fixed;
+                top: 100px;
+                right: 20px;
+                background: #2E8B57;
+                color: white;
+                padding: 0.75rem 1.25rem;
+                border-radius: 25px;
+                box-shadow: 0 4px 12px rgba(46, 139, 87, 0.3);
+                z-index: 1000;
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+                font-size: 0.9rem;
+            `;
+            statusBadge.innerHTML = `
+                <i class="fas fa-check-circle"></i>
+                <span>Code actif: ${producer.code}</span>
+                <button onclick="removeProducerCode()" style="background: rgba(255,255,255,0.2); border: none; color: white; padding: 0.25rem 0.5rem; border-radius: 12px; cursor: pointer; margin-left: 0.5rem;">
+                    <i class="fas fa-times"></i>
+                </button>
+            `;
+            document.body.appendChild(statusBadge);
+        }
+
+        function openProducerCodeModal() {
+            const modal = document.createElement('div');
+            modal.id = 'enterProducerCodeModal';
+            modal.className = 'producer-modal';
+            modal.style.display = 'flex';
+            modal.innerHTML = `
+                <div class="modal-content" style="max-width: 500px;">
+                    <div class="modal-header">
+                        <h2>
+                            <i class="fas fa-key"></i>
+                            Entrer mon code producteur
+                        </h2>
+                        <button class="modal-close" onclick="closeEnterCodeModal()">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <p style="color: #6c757d; margin-bottom: 1.5rem;">
+                            Si un professionnel vous a fourni un code, entrez-le ci-dessous pour que vos données soient automatiquement associées à son compte.
+                        </p>
+                        <form onsubmit="validateProducerCode(event)">
+                            <div class="form-group">
+                                <label for="producerCodeInput">
+                                    <i class="fas fa-key"></i>
+                                    Code producteur
+                                </label>
+                                <input type="text" id="producerCodeInput" required placeholder="Ex: PROD-XXXXX-XXXXX" style="text-transform: uppercase; letter-spacing: 2px;">
+                            </div>
+                            <div class="modal-actions">
+                                <button type="button" class="btn-cancel" onclick="closeEnterCodeModal()">
+                                    <i class="fas fa-times"></i>
+                                    Annuler
+                                </button>
+                                <button type="submit" class="btn-submit">
+                                    <i class="fas fa-check"></i>
+                                    Valider
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+
+        function closeEnterCodeModal() {
+            const modal = document.getElementById('enterProducerCodeModal');
+            if (modal) {
+                modal.remove();
+            }
+        }
+
+        function validateProducerCode(event) {
+            event.preventDefault();
+            const code = document.getElementById('producerCodeInput').value.toUpperCase().trim();
+            
+            // Récupérer tous les producteurs créés par les professionnels
+            const professionalProducers = JSON.parse(localStorage.getItem('professional_producers')) || [];
+            const producer = professionalProducers.find(p => p.code === code);
+            
+            if (producer) {
+                // Code valide - sauvegarder l'association
+                localStorage.setItem('current_producer_code', code);
+                localStorage.setItem('current_producer_id', producer.id);
+                
+                // Fermer le modal
+                closeEnterCodeModal();
+                
+                // Supprimer le bouton d'entrée de code
+                const codeButton = document.getElementById('producerCodeButton');
+                if (codeButton) codeButton.remove();
+                
+                // Afficher le statut
+                showProducerCodeStatus(producer);
+                
+                // Afficher une notification de succès
+                alert(`✅ Code validé avec succès ! Vos données seront maintenant associées à ${producer.name}.`);
+            } else {
+                alert('❌ Code invalide. Veuillez vérifier le code fourni par votre professionnel.');
+            }
+        }
+
+        function removeProducerCode() {
+            if (confirm('Voulez-vous dissocier votre compte du professionnel ?')) {
+                localStorage.removeItem('current_producer_code');
+                localStorage.removeItem('current_producer_id');
+                
+                // Supprimer le badge de statut
+                const statusBadge = document.getElementById('producerCodeStatus');
+                if (statusBadge) statusBadge.remove();
+                
+                // Réafficher le bouton d'entrée de code
+                showProducerCodeInput();
+            }
+        }
+
+        // Fonction pour retourner à l'accueil
+        function goToHome() {
+            // Si on est dans la section prédiction, revenir à la grille principale
+            const predictionSection = document.getElementById('prediction-section');
+            if (predictionSection && predictionSection.style.display !== 'none') {
+                showHomeSection();
+            } else {
+                // Sinon, recharger la page pour revenir à l'état initial
+                window.location.reload();
+            }
+        }
+
+        // Fonction pour changer de profil
+        function changeUserType() {
+            if (confirm('Voulez-vous changer de profil ? Vous serez redirigé vers la page de sélection.')) {
+                localStorage.removeItem('user_type');
+                localStorage.removeItem('user_type_selected');
+                window.location.href = 'user-type-selection.html';
+            }
+        }
+
+        function lireTexte(texte) {
+            if ('speechSynthesis' in window) {
+                const utterance = new SpeechSynthesisUtterance(texte);
+                utterance.lang = 'fr-FR';
+                utterance.rate = 0.8;
+                speechSynthesis.speak(utterance);
+            }
+        }
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            // Boutons audio seulement sur les labels (questions)
+            const labels = document.querySelectorAll('label');
+            labels.forEach(label => {
+                if (!label.querySelector('.btn-audio')) {
+                    const btnAudio = document.createElement('button');
+                    btnAudio.className = 'btn-audio';
+                    btnAudio.innerHTML = '<i class="fas fa-volume-up"></i>';
+                    btnAudio.title = 'Écouter';
+                    btnAudio.onclick = () => lireTexte(label.textContent);
+                    label.appendChild(btnAudio);
+                }
+            });
+        });
+    </script>
+</head>
+<body>
+    <!-- Header amélioré avec design moderne -->
+    <header class="app-header">
+        <div class="header-content">
+            <div class="header-left">
+                <div class="header-logo">
+                    <div class="logo-container">
+                        <i class="fas fa-seedling logo-plant"></i>
+                        <i class="fas fa-coins logo-coins"></i>
+                    </div>
+                    <div class="logo-text">
+                        <h1>Mon Cacao</h1>
+                    </div>
+                </div>
+                <div class="user-status">
+                    <div class="status-line">
+                        <i class="fas fa-circle status-dot"></i>
+                        <span>En ligne</span>
+                    </div>
+                    <div class="user-info">
+                        <i class="fas fa-user user-icon"></i>
+                        <span id="userTypeLabel">Producteur</span>
+                    </div>
+                </div>
+            </div>
+            <div class="header-right">
+                <button class="btn-change-profile" onclick="changeUserType()" title="Changer de profil">
+                    <i class="fas fa-exchange-alt"></i>
+                    <span>Changer de profil</span>
+                </button>
+                <button class="btn-disconnect" onclick="goToHome()">
+                    <i class="fas fa-home"></i>
+                    <span>Accueil</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Section principale avec grille de fonctionnalités -->
+    <main class="main-content">
+        <div class="content-container">
+            <div class="features-section">
+                <div class="section-header">
+                    <h1 class="section-title">
+                        <i class="fas fa-home"></i>
+                        Outils
+                    </h1>
+                    <button class="btn-listen">
+                        <i class="fas fa-volume-up"></i>
+                        Écouter
+                    </button>
+                </div>
+                
+                                        <!-- Grille des fonctionnalités 3x3 -->
+                        <div class="features-grid smooth-scroll">
+                                                <!-- Estimation -->
+                            <div class="feature-card touch-feedback gpu-accelerated animate-slide-in" onclick="showPredictionSection()">
+                                <div class="feature-icon prediction-icon">
+                                    <i class="fas fa-chart-line"></i>
+                                </div>
+                                <h3>Estimation</h3>
+                                <p>Estimer ma récolte et mes gains</p>
+                                <div class="feature-badge">Nouveau</div>
+                                <div class="audio-icon">
+                                    <i class="fas fa-volume-up"></i>
+                                </div>
+                            </div>
+                            
+                            <!-- Enregistrer -->
+                            <div class="feature-card" onclick="window.location.href='soumettre.html'">
+                                <div class="feature-icon submit-icon">
+                                    <i class="fas fa-upload"></i>
+                                </div>
+                                <h3>Enregistrer</h3>
+                                <p>Mes informations de récolte</p>
+                                <div class="audio-icon">
+                                    <i class="fas fa-volume-up"></i>
+                                </div>
+                            </div>
+                            
+                            <!-- Mes enregistrements -->
+                            <div class="feature-card" onclick="window.location.href='historique.html'">
+                                <div class="feature-icon history-icon">
+                                    <i class="fas fa-history"></i>
+                                </div>
+                                <h3>Mes enregistrements</h3>
+                                <p>Ce que j'ai noté avant</p>
+                                <div class="audio-icon">
+                                    <i class="fas fa-volume-up"></i>
+                                </div>
+                            </div>
+                            
+
+                            
+                            <!-- Étude -->
+                            <div class="feature-card" onclick="window.location.href='analyse.html'">
+                                <div class="feature-icon analysis-icon">
+                                    <i class="fas fa-chart-bar"></i>
+                                </div>
+                                <h3>Étude</h3>
+                                <p>Graphiques et tendances</p>
+                                <div class="audio-icon">
+                                    <i class="fas fa-volume-up"></i>
+                                </div>
+                            </div>
+                            
+                            <!-- Aide intelligent -->
+                            <div class="feature-card" onclick="window.location.href='assistant.html'">
+                                <div class="feature-icon ai-icon">
+                                    <i class="fas fa-robot"></i>
+                                </div>
+                                <h3>Aide intelligent</h3>
+                                <p>Réponses à vos questions</p>
+                                <div class="audio-icon">
+                                    <i class="fas fa-volume-up"></i>
+                                </div>
+                            </div>
+                            
+                            <!-- Aide -->
+                            <div class="feature-card" onclick="window.location.href='conseils.html'">
+                                <div class="feature-icon tips-icon">
+                                    <i class="fas fa-lightbulb"></i>
+                                </div>
+                                <h3>Aide</h3>
+                                <p>Astuces d'amélioration</p>
+                                <div class="audio-icon">
+                                    <i class="fas fa-volume-up"></i>
+                                </div>
+                            </div>
+                            
+                            <!-- Note environnement -->
+                            <div class="feature-card" onclick="window.location.href='score-ecologique.html'">
+                                <div class="feature-icon eco-icon">
+                                    <i class="fas fa-leaf"></i>
+                                </div>
+                                <h3>Note environnement</h3>
+                                <p>Évaluation environnementale</p>
+                                <div class="feature-badge">Nouveau</div>
+                                <div class="audio-icon">
+                                    <i class="fas fa-volume-up"></i>
+                                </div>
+                            </div>
+                            
+
+                </div>
+            </div>
+            
+            <!-- Section Estimation (cachée par défaut) -->
+            <div class="prediction-section" id="prediction-section" style="display: none;">
+                <div class="section-header">
+                    <h1 class="section-title">
+                        <i class="fas fa-chart-line"></i>
+                        Prédire ma Récolte
+                    </h1>
+                    <button class="btn-back-to-home" onclick="showHomeSection()" type="button">
+                        <i class="fas fa-arrow-left"></i>
+                        Retour à l'accueil
+                    </button>
+                </div>
+                <p class="section-subtitle">Remplissez les informations pour calculer votre production de cacao</p>
+                
+                <!-- Container de prédiction -->
+                <div class="prediction-container">
+                    <!-- Formulaire de prédiction -->
+                    <div class="prediction-form-container">
+                        <div class="prediction-form">
+                            <h3>📝 Ma plantation</h3>
+                            
+                            <div class="form-group">
+                                <label for="age_verger">Depuis combien d'années j'ai planté</label>
+                                <input type="number" id="age_verger" placeholder="15" step="0.1" min="0">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="agroforest">J'ai des arbres avec le cacao</label>
+                                <select id="agroforest">
+                                    <option value="Oui">Oui</option>
+                                    <option value="Non" selected>Non</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="engrais">J'utilise des engrais chimiques</label>
+                                <select id="engrais">
+                                    <option value="Oui" selected>Oui</option>
+                                    <option value="Non">Non</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="fumier">J'utilise du fumier ou compost</label>
+                                <select id="fumier">
+                                    <option value="Oui">Oui</option>
+                                    <option value="Non" selected>Non</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="maladie">Mes plants sont malades</label>
+                                <select id="maladie">
+                                    <option value="Non" selected>Non</option>
+                                    <option value="oui">Oui</option>
+                                    <option value="Un peu">Un peu</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="herbicide">J'utilise des produits contre les mauvaises herbes</label>
+                                <select id="herbicide">
+                                    <option value="Oui">Oui</option>
+                                    <option value="Non" selected>Non</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="insecticide">J'utilise des produits contre les insectes</label>
+                                <select id="insecticide">
+                                    <option value="Oui" selected>Oui</option>
+                                    <option value="Non">Non</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="fongicide">J'utilise des produits contre les champignons</label>
+                                <select id="fongicide">
+                                    <option value="Oui">Oui</option>
+                                    <option value="Non" selected>Non</option>
+                                </select>
+                            </div>
+                            
+                            <h3>💰 Mes dépenses et prix</h3>
+                            
+                            <div class="form-group">
+                                <label for="cout_prod">Combien je dépense par hectare</label>
+                                <input type="number" id="cout_prod" placeholder="450000" min="0">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="prix_a">Prix de vente du cacao (Fcfa/Kg)</label>
+                                <input type="number" id="prix_a" placeholder="1000" min="0" value="1000">
+                            </div>
+                            
+                            <h3>🌍 Ma région et la pluie</h3>
+                            
+                            <div class="form-group">
+                                <label for="region">Région</label>
+                                <select id="region">
+                                    <option value="Indenie-Djuablin" selected>Indenie-Djuablin</option>
+                                    <option value="Yamoussoukro">Yamoussoukro</option>
+                                    <option value="La Me">La Me</option>
+                                    <option value="San-Pedro">San-Pedro</option>
+                                    <option value="Grand-Ponts">Grand-Ponts</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="pluviometrie">Combien il pleut</label>
+                                <select id="pluviometrie">
+                                    <option value="Faible">Faible</option>
+                                    <option value="Moyenne" selected>Moyenne</option>
+                                    <option value="Élevée">Élevée</option>
+                                </select>
+                            </div>
+                            
+                            <h3>👤 Mes informations</h3>
+                            
+                            <div class="form-group">
+                                <label for="sexe">Je suis</label>
+                                <select id="sexe">
+                                    <option value="Masculin" selected>Un homme</option>
+                                    <option value="Feminin">Une femme</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="competences">Je sais lire et écrire</label>
+                                <select id="competences">
+                                    <option value="oui, lire et écrire" selected>Oui, je sais</option>
+                                    <option value="oui, lire seulement">Je sais seulement lire</option>
+                                    <option value="non">Non, je ne sais pas</option>
+                                </select>
+                            </div>
+                            
+                            <button class="btn btn-primary btn-full" onclick="predictProductivity()">
+                                <i class="fas fa-magic"></i>
+                                Calculer ma récolte
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Résultats de prédiction -->
+                    <div class="prediction-result" id="prediction-result">
+                        <!-- Cartes d'estimation -->
+                        <div class="estimation-cards">
+                            <div class="estimation-card">
+                                <h4>Récolte prévue</h4>
+                                <div class="estimation-value" id="production-estimated">--</div>
+                                <div class="estimation-unit">t/ha</div>
+                            </div>
+                            <div class="estimation-card">
+                                <h4>Gains possibles</h4>
+                                <div class="estimation-value" id="revenue-potential">--</div>
+                                <div class="estimation-unit">FCFA/ha</div>
+                            </div>
+                            <div class="estimation-card">
+                                <h4>Profit prévu</h4>
+                                <div class="estimation-value" id="benefit-estimated">--</div>
+                                <div class="estimation-unit">FCFA/ha</div>
+                            </div>
+                        </div>
+
+                        <!-- Comment j'ai calculé -->
+                        <div class="calculation-details">
+                            <div class="details-header">
+                                <i class="fas fa-lightbulb"></i>
+                                <h4>Comment j'ai calculé :</h4>
+                            </div>
+                            <div class="details-content" id="calculation-details">
+                                <!-- Les détails seront générés par JavaScript -->
+                            </div>
+                        </div>
+
+                        <!-- Étude détaillée et recommandations -->
+                        <div class="analysis-section">
+                            <div class="analysis-header">
+                                <i class="fas fa-chart-bar"></i>
+                                <h4>Étude détaillée et recommandations</h4>
+                            </div>
+                            
+                            <div class="analysis-content">
+                                <div class="productivity-analysis">
+                                    <h5>Étude de la productivité</h5>
+                                    <p>Votre production estimée de <strong id="user-production">--</strong> t/ha est comparée à la moyenne régionale de <strong>0.850</strong> t/ha.</p>
+                                </div>
+                                
+                                <div class="recommendations">
+                                    <h5>Recommandations</h5>
+                                    <ul id="recommendations-list">
+                                        <!-- Les recommandations seront générées par JavaScript -->
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Graphique comparatif -->
+                        <div class="comparison-chart">
+                            <h4>Étude comparative</h4>
+                            <p>Comparaison avec la moyenne régionale (Indenie)</p>
+                            <canvas id="comparison-chart" width="400" height="200"></canvas>
+                        </div>
+
+                        <!-- Répartition financière -->
+                        <div class="financial-distribution">
+                            <h4>Répartition financière</h4>
+                            <div class="chart-container">
+                                <canvas id="financial-chart" width="300" height="300"></canvas>
+                            </div>
+                        </div>
+
+                        <!-- Comment faire mieux -->
+                        <div class="optimization-suggestions">
+                            <div class="suggestions-header">
+                                <i class="fas fa-lightbulb"></i>
+                                <h4>Comment faire mieux</h4>
+                            </div>
+                            <div class="suggestions-content">
+                                <div class="improvement-tracks">
+                                    <h5>Comment améliorer :</h5>
+                                    <ul id="optimization-list">
+                                        <!-- Les suggestions seront générées par JavaScript -->
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Section État Actuel -->
+            <div class="current-status-section">
+                <h2 class="status-title">État Actuel</h2>
+                <div class="status-cards">
+                    <div class="status-card status-ok">
+                        <i class="fas fa-seedling"></i>
+                        <span>Production OK</span>
+                    </div>
+                    <div class="status-card status-warning">
+                        <i class="fas fa-thermometer-half"></i>
+                        <span>Climat à surveiller</span>
+                    </div>
+                    <div class="status-card status-ok">
+                        <i class="fas fa-coins"></i>
+                        <span>Revenus stables</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+
+
+
+
+    <!-- Modal Aide intelligent -->
+    <div id="ai-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>🤖 Mon Assistant Cacao</h2>
+                <span class="close" onclick="closeModal('ai-modal')">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="ai-chat">
+                    <div class="chat-messages" id="chat-messages">
+                        <div class="message ai-message">
+                            <div class="message-avatar">
+                                <i class="fas fa-robot"></i>
+                            </div>
+                            <div class="message-content">
+                                <p>Bonjour ! Je suis ton assistant cacao. Je peux t'aider avec des conseils pour bien cultiver ton cacao. Que veux-tu savoir ?</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="chat-input">
+                        <input type="text" id="user-message" placeholder="Pose ta question ici..." onkeypress="handleChatEnter(event)">
+                        <button onclick="sendMessage()">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="quick-questions">
+                    <h3>💡 Questions Rapides</h3>
+                    <div class="question-buttons">
+                        <button class="question-btn" onclick="askQuestion('Comment arroser mes cacaoyers ?')">
+                            💧 Arrosage
+                        </button>
+                        <button class="question-btn" onclick="askQuestion('Quand récolter mon cacao ?')">
+                            🌾 Récolte
+                        </button>
+                        <button class="question-btn" onclick="askQuestion('Comment lutter contre les maladies ?')">
+                            🛡️ Maladies
+                        </button>
+                        <button class="question-btn" onclick="askQuestion('Quels engrais utiliser ?')">
+                            🌱 Engrais
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <script src="js/script.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js">    </script>
+    
+    <!-- Service Worker Registration -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                // Utiliser un chemin relatif pour fonctionner avec ou sans serveur
+                navigator.serviceWorker.register('./sw.js')
+                    .then(registration => {
+                        console.log('Service Worker enregistré:', registration);
+                    })
+                    .catch(error => {
+                        console.log('Erreur enregistrement Service Worker:', error);
+                    });
+            });
+        }
+    </script>
+</body>
+</html>

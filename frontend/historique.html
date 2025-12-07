@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mes enregistrements - Mon Cacao</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/modern-banner.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="js/modern-banner.js"></script>
+    <script src="js/auth.js"></script>
+
+    <script>
+        // Vérifier l'authentification au chargement
+        document.addEventListener('DOMContentLoaded', function() {
+            if (checkAuthentication('producteur')) {
+                updateUserTypeDisplay();
+            }
+        });
+
+        function lireTexte(texte) {
+            if ('speechSynthesis' in window) {
+                const utterance = new SpeechSynthesisUtterance(texte);
+                utterance.lang = 'fr-FR';
+                utterance.rate = 0.8;
+                speechSynthesis.speak(utterance);
+            }
+        }
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            const labels = document.querySelectorAll('label');
+            labels.forEach(label => {
+                if (!label.querySelector('.btn-audio')) {
+                    const btnAudio = document.createElement('button');
+                    btnAudio.className = 'btn-audio';
+                    btnAudio.innerHTML = '<i class="fas fa-volume-up"></i>';
+                    btnAudio.title = 'Écouter';
+                    btnAudio.onclick = () => lireTexte(label.textContent);
+                    label.appendChild(btnAudio);
+                }
+            });
+        });
+    </script>
+</head>
+<body>
+    <!-- Header harmonisé -->
+    <header class="app-header">
+        <div class="header-content">
+            <div class="header-left">
+            <div class="header-logo">
+                    <div class="logo-container">
+                        <i class="fas fa-seedling logo-plant"></i>
+                        <i class="fas fa-coins logo-coins"></i>
+                    </div>
+                    <div class="logo-text">
+                        <h1>Mon Cacao</h1>
+                    </div>
+                </div>
+                <div class="user-status">
+                    <div class="status-line">
+                        <i class="fas fa-circle status-dot"></i>
+                        <span>En ligne</span>
+                    </div>
+                    <div class="user-info">
+                        <i class="fas fa-user user-icon"></i>
+                        <span id="userTypeLabel">Producteur</span>
+                    </div>
+                </div>
+            </div>
+            <div class="header-right">
+                <button class="btn-change-profile" onclick="changeUserType()" title="Changer de profil">
+                    <i class="fas fa-exchange-alt"></i>
+                    <span>Changer de profil</span>
+                </button>
+                <a href="index.html" class="btn-back">
+                    <i class="fas fa-arrow-left"></i>
+                    <span>Retour</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Section principale -->
+    <main class="main-content">
+        <div class="content-container">
+            <!-- Vue d'ensemble de vos données -->
+            <div class="section-header">
+                <h1 class="section-title">
+                    <i class="fas fa-history"></i>
+                    Mes enregistrements
+                </h1>
+                <p class="section-subtitle">Consultez l'historique de vos soumissions et analysez l'évolution de vos performances</p>
+                </div>
+            
+            <div class="overview-section">
+                
+                <!-- Onglets -->
+                <div class="tabs-container">
+                    <div class="tab active" data-tab="table">
+                        <i class="fas fa-table"></i>
+                        <span>Tableau de données</span>
+                    </div>
+                    <div class="tab" data-tab="analyses">
+                        <i class="fas fa-check-square"></i>
+                        <span>Études</span>
+                    </div>
+                    <div class="tab" data-tab="export">
+                        <i class="fas fa-upload"></i>
+                        <span>Exporter</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Vos données soumises -->
+            <div class="data-section">
+                <div class="data-header">
+                    <i class="fas fa-file-alt"></i>
+                    <h2>Vos données soumises</h2>
+                </div>
+                
+                <!-- Tableau de données -->
+                <div class="table-container" id="table-tab">
+                    <div class="table-wrapper">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>submission_id</th>
+                                    <th>Cout_production_ha</th>
+                                    <th>Age_verger</th>
+                                    <th>Region</th>
+                                    <th>Engrais</th>
+                                    <th>J'ai des arbres avec le cacao</th>
+                                    <th>Fumier</th>
+                                    <th>Herbicide</th>
+                                    <th>Insecticide</th>
+                                    <th>Fongicide</th>
+                                    <th>Pluviometrie</th>
+                                    <th>Maladie</th>
+                                    <th>Productivite</th>
+                                    <th>date_ajout</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>1</td>
+                                    <td>0 FCFA</td>
+                                    <td>0</td>
+                                    <td>Indenie-Djuablin</td>
+                                    <td>Oui</td>
+                                    <td>Oui</td>
+                                    <td>Oui</td>
+                                    <td>Oui</td>
+                                    <td>Oui</td>
+                                    <td>Oui</td>
+                                    <td>Moyenne</td>
+                                    <td>Non</td>
+                                    <td>0.000 t/ha</td>
+                                    <td>15/08/2025</td>
+                                </tr>
+                                <tr>
+                                    <td>2</td>
+                                    <td>450,000 FCFA</td>
+                                    <td>15</td>
+                                    <td>Yamoussoukro</td>
+                                    <td>Oui</td>
+                                    <td>Non</td>
+                                    <td>Non</td>
+                                    <td>Non</td>
+                                    <td>Oui</td>
+                                    <td>Non</td>
+                                    <td>Élevée</td>
+                                    <td>Non</td>
+                                    <td>1.2 t/ha</td>
+                                    <td>16/08/2025</td>
+                                </tr>
+                                <tr>
+                                    <td>3</td>
+                                    <td>380,000 FCFA</td>
+                                    <td>12</td>
+                                    <td>San-Pedro</td>
+                                    <td>Non</td>
+                                    <td>Oui</td>
+                                    <td>Oui</td>
+                                    <td>Oui</td>
+                                    <td>Non</td>
+                                    <td>Oui</td>
+                                    <td>Faible</td>
+                                    <td>Un peu</td>
+                                    <td>0.9 t/ha</td>
+                                    <td>17/08/2025</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <!-- Section Études -->
+                <div class="analyses-container" id="analyses-tab" style="display: none;">
+                    <div class="analyses-content">
+                        <h3>Études de vos données</h3>
+                        <div class="analyses-grid">
+                            <div class="analysis-card">
+                                <h4>Évolution de la productivité</h4>
+                                <p>Votre productivité moyenne est de 0.7 t/ha</p>
+                            </div>
+                            <div class="analysis-card">
+                                <h4>Répartition par région</h4>
+                                <p>3 régions différentes couvertes</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Section Export -->
+                <div class="export-container" id="export-tab" style="display: none;">
+                    <div class="export-content">
+                        <h3>Exporter vos données</h3>
+                        <div class="export-options">
+                            <button class="btn-export">
+                                <i class="fas fa-file-excel"></i>
+                                Exporter en Excel
+                            </button>
+                            <button class="btn-export">
+                                <i class="fas fa-file-pdf"></i>
+                                Exporter en PDF
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="js/script.js"></script>
+    <script>
+        // Gestion des onglets
+        document.addEventListener('DOMContentLoaded', function() {
+            const tabs = document.querySelectorAll('.tab');
+            const tabContents = document.querySelectorAll('#table-tab, #analyses-tab, #export-tab');
+            
+            tabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const targetTab = this.getAttribute('data-tab');
+                    
+                    // Retirer la classe active de tous les onglets
+                    tabs.forEach(t => t.classList.remove('active'));
+                    tabContents.forEach(content => content.style.display = 'none');
+                    
+                    // Ajouter la classe active à l'onglet cliqué
+                    this.classList.add('active');
+                    document.getElementById(targetTab + '-tab').style.display = 'block';
+                });
+            });
+        });
+    </script>
+</body>
+</html>

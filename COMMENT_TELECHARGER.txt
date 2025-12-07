@@ -1,0 +1,39 @@
+╔══════════════════════════════════════════════════════════════════╗
+║          🌱 MON CACAO - GUIDE DE TÉLÉCHARGEMENT RAPIDE          ║
+╚══════════════════════════════════════════════════════════════════╝
+
+📥 MÉTHODE LA PLUS SIMPLE (Pour Visualiser) :
+
+1. Sur GitHub, cliquez sur le bouton vert "Code"
+2. Sélectionnez "Download ZIP"
+3. Extrayez le fichier ZIP
+4. Ouvrez le dossier "frontend"
+5. Double-cliquez sur "index.html"
+6. ✅ C'est prêt ! L'application s'ouvre dans votre navigateur
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🔧 POUR LES FONCTIONNALITÉS COMPLÈTES (Avec Prédictions IA) :
+
+1. Installez Python 3.8+ (si pas déjà installé)
+2. Ouvrez un terminal dans le dossier du projet
+3. Exécutez : pip install -r requirements.txt
+4. Exécutez : python backend/api_server.py
+5. Ouvrez frontend/index.html dans votre navigateur
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📚 DOCUMENTATION COMPLÈTE :
+
+- GUIDE_TELECHARGEMENT.md  → Guide détaillé pas à pas
+- README.md                → Documentation complète
+- QUICKSTART.md            → Démarrage rapide
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+💡 ASTUCE : Pour visualiser rapidement, ouvrez simplement :
+   frontend/index.html
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+
