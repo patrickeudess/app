@@ -1,0 +1,9 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 📚 Documentation
+    url: https://github.com/votre-username/mon-cacao#readme
+    about: Consultez la documentation du projet
+  - name: 💬 Discussions
+    url: https://github.com/votre-username/mon-cacao/discussions
+    about: Posez des questions et partagez vos idées
+
